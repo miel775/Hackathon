@@ -1,56 +1,69 @@
+body {
+    /* CSS Background Gradient derived from provided image */
+    background:
+        radial-gradient(circle at top left, #1a100a 0%, transparent 60%),
+        radial-gradient(circle at top right, #b48d68 0%, transparent 50%),
+        radial-gradient(circle at bottom left, #c8652d 0%, transparent 70%),
+        radial-gradient(circle at bottom right, #ff6600 0%, transparent 60%);
+    background-color: #1a100a;
 
-        /* === Detail Page === */
-        #detail-page {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent; 
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            pointer-events: none;
-            transition: opacity 1s ease;
-        }
+}
 
-        #detail-page.active {
-            opacity: 1;
-            pointer-events: all;
-        }
 
-        .content-container {
-            max-width: 800px;
-            padding: 40px;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-        }
 
-        h1 {
-            color: #a252ff;
-            margin-top: 0;
-        }
+/* === Detail Page === */
+#detail-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    color: #fff;
+}
 
-        #back-btn {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
-        }
+#detail-page.active {
+    opacity: 1;
+    pointer-events: all;
+}
 
-        #back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+.content-container {
+    max-width: 800px;
+    padding: 40px;
+    text-align: left;
+    background-color: rgb(77, 77, 77);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+}
+
+h1 {
+    color: #FFF;
+    margin-top: 0;
+}
+
+#back-btn {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+#back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
