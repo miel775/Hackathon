@@ -28,6 +28,7 @@ body {
     pointer-events: none;
     transition: opacity 1s ease;
     color: #fff;
+    font-family:open sans;
 }
 
 #detail-page.active {
