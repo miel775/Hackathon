@@ -12,25 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Welcome</h1>
+    <h1>Easter Egg</h1>
 
-    <a href="./easteregg.html">
-      <div id="blackhole-wrapper">
-        <div id="blackhole">
-          <div id="text">
-            <h1>Onderzoeksvragen</h1>
-          </div>
-        </div>
-      </div>
-</a>
-
-    <script>
-      const textElement = document.getElementById('text');
-const innerText = textElement.innerText; 
-
-textElement.innerHTML = innerText.split('').map(
-  (char, i) => `<span style="transform: rotate(${i * 8.3}deg); display: inline-block;">${char}</span>`
-).join('');
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
