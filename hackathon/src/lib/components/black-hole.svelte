@@ -4,6 +4,16 @@
 
     let textElement;
 
+    onMount(() => {
+        gsap.to(textElement, {
+            rotation: 360,
+            // Use svgOrigin instead of transformOrigin for bulletproof SVG rotation
+            svgOrigin: "125 125", 
+            duration: 10, 
+            ease: "none",
+            repeat: -1    
+        });
+    });
 </script>
 
 <svg id="blackhole" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
