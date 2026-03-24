@@ -1,5 +1,6 @@
 <script lang="ts">
-  import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
+  import BlackHole from "$lib/components/blackhole.svelte";
+
   import "$lib/styles/home.css";
 
   let { data } = $props();
@@ -15,4 +16,4 @@
   />
 </svelte:head>
 
-<BlackHoleInfoPage cardConfigs={data.cards} />
+<BlackHole />
