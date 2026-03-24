@@ -13,7 +13,7 @@
   </head>
   <body>
 
-    <h1> Onderzoeksvragen </h1>
+    <h1> Easter Egg </h1>
 
   </body>
 </html>
