@@ -22,19 +22,15 @@ body {
   background-color: var(--primary-color);
   color: var(--neutral-color-white);
   font-family: "Space Mono";
-  width: 100%;
+  display: grid;
+  place-items: center;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 button {
   padding: 0.5rem 0.9rem;
   cursor: pointer;
 }
-
-
 
  @keyframes rotation {
    from {
