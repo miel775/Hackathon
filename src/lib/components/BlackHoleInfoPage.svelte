@@ -71,7 +71,7 @@
 
   let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
 
-  // Black hole config 
+  // Black hole config
   const blackhole = {
     x: 0,
     y: 0,
@@ -80,7 +80,7 @@
     gravity: animationConfig.blackHole.gravity,
   };
 
-  // Internal per-card physics 
+  // Internal per-card physics
   type Physics = {
     orbitRadius: number;
     orbitAngle: number;
@@ -117,7 +117,7 @@
     };
   }
 
-  // Reactive display state (drives Svelte style: directives) 
+  // Reactive display state (drives Svelte style: directives)
   let cards = $state<CardState[]>([]);
   let physics: Physics[] = [];
 
@@ -132,7 +132,8 @@
     const pulse =
       Math.sin(frame * animationConfig.render.pulseFrequency) *
       animationConfig.render.pulseAmplitude;
-    const glowR = blackhole.radius * animationConfig.render.glowRadiusMultiplier + pulse;
+    const glowR =
+      blackhole.radius * animationConfig.render.glowRadiusMultiplier + pulse;
     const g = ctx.createRadialGradient(
       blackhole.x,
       blackhole.y,
@@ -177,10 +178,16 @@
     const ringCount = Math.min(baseSlotsPerRing, total - ringStart);
     const slotInRing = index - ringStart;
     const angle = -Math.PI / 2 + (Math.PI * 2 * slotInRing) / ringCount;
-    const minSide = Math.max(orbitLayout.minViewportSide, Math.min(canvas.width, canvas.height));
+    const minSide = Math.max(
+      orbitLayout.minViewportSide,
+      Math.min(canvas.width, canvas.height),
+    );
     const baseR = Math.max(
       orbitLayout.minOrbitRadius,
-      Math.min(orbitLayout.maxOrbitRadius, minSide * orbitLayout.orbitRadiusScale),
+      Math.min(
+        orbitLayout.maxOrbitRadius,
+        minSide * orbitLayout.orbitRadiusScale,
+      ),
     );
     const ringStep = Math.max(
       orbitLayout.minRingStep,
@@ -190,11 +197,17 @@
     return {
       x: Math.min(
         canvas.width - orbitLayout.xBoundaryPadding,
-        Math.max(orbitLayout.xBoundaryPadding, blackhole.x + Math.cos(angle) * radius),
+        Math.max(
+          orbitLayout.xBoundaryPadding,
+          blackhole.x + Math.cos(angle) * radius,
+        ),
       ),
       y: Math.min(
         canvas.height - orbitLayout.yBoundaryPadding,
-        Math.max(orbitLayout.yBoundaryPadding, blackhole.y + Math.sin(angle) * radius),
+        Math.max(
+          orbitLayout.yBoundaryPadding,
+          blackhole.y + Math.sin(angle) * radius,
+        ),
       ),
     };
   }
@@ -209,18 +222,20 @@
       const slot = getOrbitSlot(i, total);
       const radiusOffset =
         offsets[i % offsets.length] +
-        Math.floor(i / offsets.length) * animationConfig.orbitLayout.radiusOffsetRowIncrement;
+        Math.floor(i / offsets.length) *
+          animationConfig.orbitLayout.radiusOffsetRowIncrement;
       const dx = slot.x - blackhole.x,
         dy = slot.y - blackhole.y;
       physicsState.orbitRadius = Math.max(
-        animationConfig.orbitLayout.minimumCardOrbitRadius,
+        80,
         Math.hypot(dx, dy) + radiusOffset,
       );
       physicsState.orbitAngle = Math.atan2(dy, dx);
 
       if (initial) {
-        spawnFromSide(card);
-        beginEntry(physicsState);
+        spawnFromSide(card, physicsState);
+
+        beginEntry(card, physicsState);
       } else if (!physicsState.falling) {
         card.x = slot.x;
         card.y = slot.y;
@@ -229,7 +244,7 @@
     });
   }
 
-  function spawnFromSide(card: CardState) {
+  function spawnFromSide(card: CardState, physicsState: Physics) {
     const { spawnMargin } = animationConfig.entry;
     const side = Math.floor(Math.random() * 4);
     card.x =
@@ -246,47 +261,49 @@
           : Math.random() * canvas.height;
   }
 
-  function beginEntry(physicsState: Physics) {
+  function beginEntry(card: CardState, physicsState: Physics) {
+    const dx = card.x - blackhole.x;
+    const dy = card.y - blackhole.y;
+
     physicsState.startOrbitRadius = Math.max(
       physicsState.orbitRadius + animationConfig.entry.additionalStartRadius,
       animationConfig.entry.minimumStartRadius,
     );
-    physicsState.entryStartAngle = 0;
+    physicsState.entryStartAngle = Math.atan2(dy, dx);
     physicsState.orbitDirection = Math.random() < 0.5 ? -1 : 1;
-    const turns = animationConfig.entry.minTurns + Math.random() * animationConfig.entry.turnVariance;
+    const turns =
+      animationConfig.entry.minTurns +
+      Math.random() * animationConfig.entry.turnVariance;
     physicsState.entryTargetAngle =
-      physicsState.orbitAngle + physicsState.orbitDirection * turns * Math.PI * 2;
+      physicsState.orbitAngle +
+      physicsState.orbitDirection * turns * Math.PI * 2;
     physicsState.entryProgress = 0;
     physicsState.entering = true;
   }
 
-  //  Per-card update 
+  //  Per-card update
   function updateCard(card: CardState, physicsState: Physics) {
     if (card.hidden) {
-      if (physicsState.respawnAt !== null && Date.now() >= physicsState.respawnAt) {
+      if (
+        physicsState.respawnAt !== null &&
+        Date.now() >= physicsState.respawnAt
+      ) {
+        // Reset visuele staat
         card.hidden = false;
         card.scale = 1;
         card.opacity = 1;
+
+        // Reset physics flags
         physicsState.falling = false;
         physicsState.vx = 0;
         physicsState.vy = 0;
-        spawnFromSide(card);
-        physicsState.startOrbitRadius = Math.max(
-          physicsState.orbitRadius + animationConfig.entry.additionalStartRadius,
-          animationConfig.entry.minimumStartRadius,
-        );
-        physicsState.entryStartAngle = Math.atan2(
-          card.y - blackhole.y,
-          card.x - blackhole.x,
-        );
-        physicsState.entryTargetAngle =
-          physicsState.orbitAngle +
-          physicsState.orbitDirection *
-            (animationConfig.entry.minTurns + Math.random() * animationConfig.entry.turnVariance) *
-            Math.PI *
-            2;
-        physicsState.entryProgress = 0;
-        physicsState.entering = true;
+
+        // Nieuwe spawn vanaf de rand
+        spawnFromSide(card, physicsState);
+
+        // Zelfde entry-logica als bij eerste instap
+        beginEntry(card, physicsState);
+
         physicsState.respawnAt = null;
       }
       return;
@@ -297,7 +314,10 @@
         1,
         physicsState.entryProgress + animationConfig.entry.progressStep,
       );
-      const eased = Math.pow(physicsState.entryProgress, animationConfig.entry.easingExponent);
+      const eased = Math.pow(
+        physicsState.entryProgress,
+        animationConfig.entry.easingExponent,
+      );
       const angle =
         physicsState.entryStartAngle +
         (physicsState.entryTargetAngle - physicsState.entryStartAngle) * eased;
@@ -306,15 +326,22 @@
         (physicsState.orbitRadius - physicsState.startOrbitRadius) * eased;
       card.x = blackhole.x + Math.cos(angle) * radius;
       card.y =
-        blackhole.y + Math.sin(angle) * radius + (1 - eased) * animationConfig.entry.verticalDropOffset;
+        blackhole.y +
+        Math.sin(angle) * radius +
+        (1 - eased) * animationConfig.entry.verticalDropOffset;
       if (physicsState.entryProgress >= 1) {
         physicsState.entering = false;
         physicsState.orbitAngle = angle;
       }
     } else if (!physicsState.falling) {
-      physicsState.orbitAngle += physicsState.orbitSpeed * physicsState.orbitDirection;
-      card.x = blackhole.x + Math.cos(physicsState.orbitAngle) * physicsState.orbitRadius;
-      card.y = blackhole.y + Math.sin(physicsState.orbitAngle) * physicsState.orbitRadius;
+      physicsState.orbitAngle +=
+        physicsState.orbitSpeed * physicsState.orbitDirection;
+      card.x =
+        blackhole.x +
+        Math.cos(physicsState.orbitAngle) * physicsState.orbitRadius;
+      card.y =
+        blackhole.y +
+        Math.sin(physicsState.orbitAngle) * physicsState.orbitRadius;
     }
 
     if (physicsState.falling) {
@@ -323,16 +350,26 @@
       const dist = Math.hypot(dx, dy) || animationConfig.falling.minDistance;
       physicsState.vx =
         (physicsState.vx +
-          (dx / dist) * blackhole.gravity * animationConfig.falling.accelerationFactor) *
+          (dx / dist) *
+            blackhole.gravity *
+            animationConfig.falling.accelerationFactor) *
         animationConfig.falling.velocityDamping;
       physicsState.vy =
         (physicsState.vy +
-          (dy / dist) * blackhole.gravity * animationConfig.falling.accelerationFactor) *
+          (dy / dist) *
+            blackhole.gravity *
+            animationConfig.falling.accelerationFactor) *
         animationConfig.falling.velocityDamping;
       card.x += physicsState.vx;
       card.y += physicsState.vy;
-      card.scale = Math.max(animationConfig.falling.minScale, card.scale * animationConfig.falling.scaleDecay);
-      card.opacity = Math.max(0, card.opacity * animationConfig.falling.opacityDecay);
+      card.scale = Math.max(
+        animationConfig.falling.minScale,
+        card.scale * animationConfig.falling.scaleDecay,
+      );
+      card.opacity = Math.max(
+        0,
+        card.opacity * animationConfig.falling.opacityDecay,
+      );
       if (dist < blackhole.absorbRadius) {
         card.hidden = true;
         physicsState.respawnAt = Date.now() + animationConfig.respawn.delayMs;
