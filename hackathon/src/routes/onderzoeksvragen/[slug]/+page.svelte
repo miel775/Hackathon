@@ -1,19 +1,24 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Onderzoeksvragen</title>
-    <link rel="stylesheet" href="style.css" />
+<script lang="ts">
+  import { page } from "$app/state";
+  import "$lib/styles/detail.css";
 
-    <!-- fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  </head>
-  <body>
+  type DetailData = {
+    title: string;
+    body: string;
+  };
 
-    <h1> Detailpagina </h1>
+  let { data } = $props<{ data: DetailData }>();
+</script>
 
-  </body>
-</html>
+<svelte:head>
+  <title>{data.title} | Onderzoeksvragen</title>
+</svelte:head>
+
+<main class="detail-page">
+  <a class="back-link" href="/">← Back to overview</a>
+  <article class="card">
+    <h1>{data.title}</h1>
+    <p>{@html data.body}</p>
+    <p class="slug">Slug: {page.params.slug}</p>
+  </article>
+</main>

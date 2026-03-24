@@ -1,19 +1,18 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Onderzoeksvragen</title>
-    <link rel="stylesheet" href="style.css" />
+<script lang="ts">
+  import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
+  import "$lib/styles/home.css";
 
-    <!-- fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  </head>
-  <body>
+  let { data } = $props();
+</script>
 
-    <h1> Onderzoeksvragen </h1>
+<svelte:head>
+  <title>Onderzoeksvragen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet"
+  />
+</svelte:head>
 
-  </body>
-</html>
+<BlackHoleInfoPage cardConfigs={data.cards} />

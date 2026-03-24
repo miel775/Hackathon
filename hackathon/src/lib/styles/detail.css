@@ -1,0 +1,41 @@
+.detail-page {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: radial-gradient(circle at center, #1f1830 0%, #07070d 55%, #000 100%);
+  color: #fff;
+  font-family: "Space Mono", monospace;
+}
+
+.back-link {
+  justify-self: center;
+  color: #b7c3ff;
+  text-decoration: none;
+}
+
+.card {
+  width: min(680px, 90vw);
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  background: rgb(20 20 30 / 78%);
+  box-shadow: 0 12px 35px rgb(0 0 0 / 35%);
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+p {
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+.slug {
+  color: #cfd7ff;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
