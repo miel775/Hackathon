@@ -23,6 +23,11 @@
       glowInnerRadiusMultiplier: 0.05, // Inner radial-gradient radius relative to blackHole.radius.
       accretionRingWidth: 1, // Stroke width for the accretion ring
       accretionRingRadiusMultiplier: 3.55, // Arc radius relative to blackHole.radius.
+      accretionRingRadius: 5,
+      accretionRingGrowthRate: 20,
+      accretionRingInitialAngle: 100,
+      accretionRingAngleStep: 0.1,
+
       accretionStartSpeed: 0.001, // Per-frame speed for the ring’s start angle.
       accretionSweepAngle: 1.3, // Arc length (radians) swept each frame.
     },
@@ -140,20 +145,24 @@
   function drawAccretionRing(ctx: CanvasRenderingContext2D) {
     // Accretion "ring" (currently a single stroked arc segment).
     // It's animated by moving the arc's start/end angles a bit every frame.
-    // ctx.strokeStyle = colorConfig.accretionRingStroke;
-    // ctx.lineWidth = animationConfig.render.accretionRingWidth;
-    // ctx.beginPath();
-    // ctx.arc(
-    //   blackhole.x,
-    //   blackhole.y,
-    //   // Radius of the arc relative to the black hole size.
-    //   blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
-    //   // Start angle grows over time, creating the "sweeping" motion.
-    //   frame * animationConfig.render.accretionStartSpeed,
-    //   // End angle = a fixed sweep length + the same time-based rotation.
-    //   Math.PI * animationConfig.render.accretionSweepAngle +
-    //     frame * animationConfig.render.accretionStartSpeed,
-    // );
+
+    const growthRate = animationConfig.render.accretionRingGrowthRate;
+    ctx.strokeStyle = colorConfig.accretionRingStroke;
+    ctx.lineWidth = animationConfig.render.accretionRingWidth;
+
+    let angleStep = animationConfig.render.accretionRingAngleStep;
+    let angle = animationConfig.render.accretionRingInitialAngle;
+    const centerX = blackhole.x;
+    const centerY = blackhole.y;
+
+    let currentAngle = 0;
+    while (currentAngle < angle) {
+      const radius = growthRate * currentAngle;
+      const x = centerX + radius * Math.cos(currentAngle);
+      const y = centerY + radius * Math.sin(currentAngle);
+      ctx.lineTo(x, y);
+      currentAngle += angleStep;
+    }
     ctx.stroke();
   }
 
