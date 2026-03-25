@@ -18,13 +18,11 @@
       gravity: 0.24,
     },
     render: {
-      pulseFrequency: 0.02,
-      pulseAmplitude: 5,
       glowRadiusMultiplier: 2.6,
       glowInnerRadiusMultiplier: 0.35,
-      accretionRingWidth: 3,
+      accretionRingWidth: 1,
       accretionRingRadiusMultiplier: 1.55,
-      accretionStartSpeed: 0.01,
+      accretionStartSpeed: 0.001,
       accretionSweepAngle: 1.3,
     },
     orbitLayout: {
@@ -67,6 +65,17 @@
       base: 0.0002,
       variance: 0.00025,
     },
+  } as const;
+
+  const colorConfig = {
+    spaceBackground: "#000",
+    blackHoleFill: "#030303",
+    glowGradientStops: [
+      { stop: 0, color: "rgba(20,20,20,1)" },
+      { stop: 0.45, color: "rgba(63,38,89,0.6)" },
+      { stop: 1, color: "rgba(0,0,0,0)" },
+    ],
+    accretionRingStroke: "rgba(128,90,255,0.4)",
   } as const;
 
   let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
@@ -125,15 +134,34 @@
   let canvas: HTMLCanvasElement;
   let frame = 0;
 
+  // function drawAccretionRing(ctx: CanvasRenderingContext2D) {
+  //   // Accretion "ring" (currently a single stroked arc segment).
+  //   // It's animated by moving the arc's start/end angles a bit every frame,
+  //   // which is why it can look less like a full torus/annulus effect.
+  //   ctx.strokeStyle = colorConfig.accretionRingStroke;
+  //   ctx.lineWidth = animationConfig.render.accretionRingWidth;
+  //   ctx.beginPath();
+  //   ctx.arc(
+  //     blackhole.x,
+  //     blackhole.y,
+  //     // Radius of the arc relative to the black hole size.
+  //     blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
+  //     // Start angle grows over time, creating the "sweeping" motion.
+  //     frame * animationConfig.render.accretionStartSpeed,
+  //     // End angle = a fixed sweep length + the same time-based rotation.
+  //     // sweepAngle controls how long the bright segment is.
+  //     Math.PI * animationConfig.render.accretionSweepAngle +
+  //       frame * animationConfig.render.accretionStartSpeed,
+  //   );
+  //   ctx.stroke();
+  // }
+
   function drawScene(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = colorConfig.spaceBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const pulse =
-      Math.sin(frame * animationConfig.render.pulseFrequency) *
-      animationConfig.render.pulseAmplitude;
     const glowR =
-      blackhole.radius * animationConfig.render.glowRadiusMultiplier + pulse;
+      blackhole.radius * animationConfig.render.glowRadiusMultiplier;
     const g = ctx.createRadialGradient(
       blackhole.x,
       blackhole.y,
@@ -142,31 +170,20 @@
       blackhole.y,
       glowR,
     );
-    g.addColorStop(0, "rgba(20,20,20,1)");
-    g.addColorStop(0.45, "rgba(63,38,89,0.6)");
-    g.addColorStop(1, "rgba(0,0,0,0)");
+    for (const { stop, color } of colorConfig.glowGradientStops) {
+      g.addColorStop(stop, color);
+    }
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(blackhole.x, blackhole.y, glowR, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "#030303";
+    ctx.fillStyle = colorConfig.blackHoleFill;
     ctx.beginPath();
     ctx.arc(blackhole.x, blackhole.y, blackhole.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = "rgba(128,90,255,0.4)";
-    ctx.lineWidth = animationConfig.render.accretionRingWidth;
-    ctx.beginPath();
-    ctx.arc(
-      blackhole.x,
-      blackhole.y,
-      blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
-      frame * animationConfig.render.accretionStartSpeed,
-      Math.PI * animationConfig.render.accretionSweepAngle +
-        frame * animationConfig.render.accretionStartSpeed,
-    );
-    ctx.stroke();
+    // drawAccretionRing(ctx);
   }
 
   // Orbit slot layout
@@ -243,7 +260,7 @@
       }
     });
   }
-
+// Spawn a card from the side of the screen
   function spawnFromSide(card: CardState, physicsState: Physics) {
     const { spawnMargin } = animationConfig.entry;
     const side = Math.floor(Math.random() * 4);
@@ -261,6 +278,7 @@
           : Math.random() * canvas.height;
   }
 
+  // Begin the entry animation for a card
   function beginEntry(card: CardState, physicsState: Physics) {
     const dx = card.x - blackhole.x;
     const dy = card.y - blackhole.y;
@@ -288,7 +306,7 @@
         physicsState.respawnAt !== null &&
         Date.now() >= physicsState.respawnAt
       ) {
-        // Reset visuele staat
+        // Reset visual state
         card.hidden = false;
         card.scale = 1;
         card.opacity = 1;
@@ -298,10 +316,7 @@
         physicsState.vx = 0;
         physicsState.vy = 0;
 
-        // Nieuwe spawn vanaf de rand
         spawnFromSide(card, physicsState);
-
-        // Zelfde entry-logica als bij eerste instap
         beginEntry(card, physicsState);
 
         physicsState.respawnAt = null;
