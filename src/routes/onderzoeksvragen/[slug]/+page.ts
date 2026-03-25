@@ -8,6 +8,14 @@ type CardConfig = {
   listItems: string;
 };
 
+function createSlug(text: string) {
+  if (!text) return '';
+  return text.toLowerCase().trim()
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/[\s_-]+/g, '-') 
+    .replace(/^-+|-+$/g, ''); 
+}
+
 export async function load({
   fetch,
   params,
@@ -31,7 +39,7 @@ export async function load({
 
   const cards = (await response.json()) as CardConfig[];
   const match = cards.find(
-    (card) => card.id.toLowerCase() === params.slug.toLowerCase(),
+    (card) => createSlug(card.title) === params.slug.toLowerCase(),
   );
 
   if (!match) {
