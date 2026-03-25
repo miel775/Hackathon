@@ -1,7 +1,7 @@
 [
   {
     "id": "A",
-    "title": "What does NEBULA – Xplorer stand for?",
+    "title": "Waar staat NEBULA – Xplorer voor?",
     "subtitle": "Click here to find out",
     "content": "NEBULA – Xplorer stands for “Netherlands Educational Satellite for Exploration of Binary-Linked Astrophysics – X-ray Observer”.",
     "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/04/Nebula-Xplorer-InDevelopment-space-mission-SRON_Detail.png",
@@ -26,8 +26,11 @@
   },
   {
     "id": "C",
-    "title": "Data C",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "Wanneer is Euclid gelanceerd?",
+    "subtitle": "Click here to find out.",
+    "content": "Euclid is in 2023 gelanceerd in een baan om de Zon, in het L2 langrangepunt. Met een ongekend breed blikveld voor een telescoop met hoge resolutie brengt Euclid miljarden sterrenstelsels in kaart. Door te kijken naar hun verdeling en schijnbare vervormingen, hopen astronomen meer inzicht te krijgen in donkere energie en donkere materie. De enorme database levert bovendien informatie over botsingen tussen sterrenstelsels en eventuele actieve superzware zwarte gaten in hun kern.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2026/01/Euclid_looking_into_the_Universe_SRON.jpg",
+    "imageAlt": "An illustration of the Nebula Xplorer"
   },
   {
     "id": "F",

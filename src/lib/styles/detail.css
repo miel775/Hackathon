@@ -41,6 +41,7 @@ p {
 }
 
 .detail-page-img {
+  display: block;
   width: 50%;
   padding-top: 1rem;
   margin: 0 auto;
