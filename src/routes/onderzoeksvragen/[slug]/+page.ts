@@ -1,0 +1,37 @@
+type CardConfig = {
+  id: string;
+  title: string;
+  subtitle: string;
+};
+
+export async function load({
+  fetch,
+  params,
+}: {
+  fetch: typeof globalThis.fetch;
+  params: { slug: string };
+}) {
+  const fallback = {
+    title: "Unknown topic",
+    body: "No content exists for this slug yet.",
+  };
+
+  const response = await fetch("/cards.json");
+  if (!response.ok) {
+    return fallback;
+  }
+
+  const cards = (await response.json()) as CardConfig[];
+  const match = cards.find(
+    (card) => card.id.toLowerCase() === params.slug.toLowerCase(),
+  );
+
+  if (!match) {
+    return fallback;
+  }
+
+  return {
+    title: match.title,
+    body: match.subtitle,
+  };
+}
