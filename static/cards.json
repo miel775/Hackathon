@@ -1,8 +1,10 @@
 [
   {
     "id": "A",
-    "title": "A",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "What does NEBULA – Xplorer stand for?",
+    "subtitle": "Click here to find out",
+    "content": "NEBULA – Xplorer stands for “Netherlands Educational Satellite for Exploration of Binary-Linked Astrophysics – X-ray Observer”.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/04/Nebula-Xplorer-InDevelopment-space-mission-SRON_Detail.png"
   },
   {
     "id": "B",

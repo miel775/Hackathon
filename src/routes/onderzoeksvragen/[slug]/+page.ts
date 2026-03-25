@@ -2,6 +2,8 @@ type CardConfig = {
   id: string;
   title: string;
   subtitle: string;
+  content: string;
+  imageUrl: string;
 };
 
 export async function load({
@@ -14,6 +16,8 @@ export async function load({
   const fallback = {
     title: "Unknown topic",
     body: "No content exists for this slug yet.",
+    content: "No content exists for this topic.",
+    imageUrl: "No image exists for this topic",
   };
 
   const response = await fetch("/cards.json");
@@ -33,5 +37,7 @@ export async function load({
   return {
     title: match.title,
     body: match.subtitle,
+    content: match.content,
+    imageUrl: match.imageUrl,
   };
 }

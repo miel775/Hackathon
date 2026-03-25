@@ -39,3 +39,8 @@ p {
   font-size: 0.9rem;
   opacity: 0.85;
 }
+
+.detail-page-img {
+    width: 100%;
+    padding-top: 1rem;
+}

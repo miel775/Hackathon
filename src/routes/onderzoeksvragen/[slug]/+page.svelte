@@ -5,6 +5,8 @@
   type DetailData = {
     title: string;
     body: string;
+    content: string;
+    imageUrl: string;
   };
 
   let { data } = $props<{ data: DetailData }>();
@@ -18,7 +20,9 @@
   <a class="back-link" href="/">← Back to overview</a>
   <article class="card">
     <h1>{data.title}</h1>
-    <p>{@html data.body}</p>
-    <p class="slug">Slug: {page.params.slug}</p>
+    <!-- <p>{@html data.body}</p> -->
+    <p>{data.content}</p>
+    <img class="detail-page-img" src="{data.imageUrl}" alt="">
+    <p class="slug">Card: {page.params.slug}</p>
   </article>
 </main>
