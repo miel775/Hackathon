@@ -19,7 +19,7 @@
 </svelte:head>
 
 <main class="detail-page">
-  <a class="back-link" href="/">← Back to overview</a>
+  <a class="back-link" href="/">🚀 Back to overview</a>
   <article class="card">
     <h1>{data.title}</h1>
     <!-- <p>{@html data.body}</p> -->
