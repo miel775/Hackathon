@@ -19,17 +19,17 @@
       gravity: 0.12, // Pull strength toward the center (affects entry/fall feel).
     },
     render: {
-      glowRadiusMultiplier: 2.6, // Outer radial-gradient radius relative to blackHole.radius.
-      glowInnerRadiusMultiplier: 0.35, // Inner radial-gradient radius relative to blackHole.radius.
+      glowRadiusMultiplier: 7.0, // Outer radial-gradient radius relative to blackHole.radius.
+      glowInnerRadiusMultiplier: 0.05, // Inner radial-gradient radius relative to blackHole.radius.
       accretionRingWidth: 1, // Stroke width for the accretion ring
-      accretionRingRadiusMultiplier: 1.55, // Arc radius relative to blackHole.radius.
+      accretionRingRadiusMultiplier: 3.55, // Arc radius relative to blackHole.radius.
       accretionStartSpeed: 0.001, // Per-frame speed for the ring’s start angle.
       accretionSweepAngle: 1.3, // Arc length (radians) swept each frame.
     },
     orbitLayout: {
       baseSlotsPerRing: 6, // Default capacity: cards per ring before adding a new ring.
       minViewportSide: 200, // Minimum canvas dimension used for responsive scaling.
-      minOrbitRadius: 90, // Lower bound for the first ring radius.
+      minOrbitRadius: 100, // Lower bound for the first ring radius.
       maxOrbitRadius: 220, // Upper bound for orbit radius scaling.
       orbitRadiusScale: 0.28, // Multiplier to derive orbit radii from viewport size.
       minRingStep: 48, // Lower bound for the spacing between rings.
@@ -44,11 +44,11 @@
     entry: {
       spawnMargin: 140, // Off-screen margin for initial spawn positions.
       additionalStartRadius: 160, // Extra radius added so each card starts further out.
-      minimumStartRadius: 300, // Clamp to ensure entry starts from a comfortable distance.
+      minimumStartRadius: 400, // Clamp to ensure entry starts from a comfortable distance.
       minTurns: 0.55, // Minimum number of orbit turns during the entry animation.
       turnVariance: 0.35, // Random variation added to turns per card.
-      progressStep: 0.0014, // How quickly entry progress advances each frame.
-      easingExponent: 0.85, // Easing exponent shaping: how the entry speed ramps.
+      progressStep: 0.00014, // How quickly entry progress advances each frame.
+      easingExponent: 0.95, // Easing exponent shaping: how the entry speed ramps.
       verticalDropOffset: 80, // Added vertical variation so entries aren’t perfectly symmetrical.
     },
     falling: {
@@ -72,13 +72,13 @@
     spaceBackground: "#000", // Background color for the canvas.
     blackHoleFill: "#030303", // Fill color of the black hole core disk.
     glowGradientStops: [
-      { stop: 0, color: "rgba(20,20,20,1)" }, // 0 = inner radius color (brightest center).
-      { stop: 0.45, color: "rgba(63,38,89,0.6)" }, // Mid glow color (adds a purple tint).
-      { stop: 1, color: "rgba(0,0,0,0)" }, // 1 = outer radius (fully transparent).
+      { stop: 0, color: "rgba(20,20,20,1)" }, // 0 = inner radius color.
+      { stop: 0.45, color: "rgba(248, 132, 12,0.3)" }, // Mid glow color.
+      { stop: 0.65, color: "rgba(248, 132, 12,0.2)" }, // Outer middle glow color.
+      { stop: 1, color: "rgba(0,0,0,0)" }, // 1 = outer radius.
     ],
     accretionRingStroke: "rgba(128,90,255,0.4)", // Stroke color for the accretion arc (includes alpha).
   } as const;
-
   let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
 
   // Black hole config
@@ -245,7 +245,7 @@
       const dx = slot.x - blackhole.x,
         dy = slot.y - blackhole.y;
       physicsState.orbitRadius = Math.max(
-        80,
+        animationConfig.orbitLayout.minOrbitRadius,
         Math.hypot(dx, dy) + radiusOffset,
       );
       physicsState.orbitAngle = Math.atan2(dy, dx);
@@ -284,7 +284,11 @@
     const dx = card.x - blackhole.x;
     const dy = card.y - blackhole.y;
 
+    // Use the card's actual spawn distance as the starting radius.
+    const spawnDist = Math.hypot(dx, dy);
+
     physicsState.startOrbitRadius = Math.max(
+      spawnDist,
       physicsState.orbitRadius + animationConfig.entry.additionalStartRadius,
       animationConfig.entry.minimumStartRadius,
     );
@@ -538,7 +542,6 @@
   }
 
   #blackhole {
-    stroke: #fff;
     stroke-miterlimit: 10;
     font-family: "Space Mono", monospace;
     display: block;
@@ -549,17 +552,16 @@
   }
 
   .orbit-text {
+    stroke: #fff;
     font-size: 32px;
   }
 
   .orbit-card {
     position: absolute;
     pointer-events: all;
-    /* CSS handles scale/opacity recovery — no JS lerp needed */
     transition:
       transform 0.25s ease,
       opacity 0.3s ease;
-    /* ... your card styles ... */
   }
 
   .orbit-card.hovered {
