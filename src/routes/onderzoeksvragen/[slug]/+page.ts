@@ -5,6 +5,7 @@ type CardConfig = {
   content: string;
   imageUrl: string;
   imageAlt: string;
+  listItems: string;
 };
 
 export async function load({
@@ -20,6 +21,7 @@ export async function load({
     content: "No content exists for this topic.",
     imageUrl: "No image exists for this topic",
     imageAlt: "No alt exists for this topic",
+    listItems: "",
   };
 
   const response = await fetch("/cards.json");
@@ -42,5 +44,6 @@ export async function load({
     content: match.content,
     imageUrl: match.imageUrl,
     imageAlt: match.imageAlt,
+    listItems: match.listItems,
   };
 }

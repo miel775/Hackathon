@@ -8,6 +8,7 @@
     content: string;
     imageUrl: string;
     imageAlt: string;
+    listItems?: string[];
   };
 
   let { data } = $props<{ data: DetailData }>();
@@ -23,7 +24,14 @@
     <h1>{data.title}</h1>
     <!-- <p>{@html data.body}</p> -->
     <p>{data.content}</p>
-    <img class="detail-page-img" src="{data.imageUrl}" alt="{data.imageAlt}">
+    {#if data.listItems}
+      <ul>
+        {#each data.listItems as item}
+          <li>{item}</li>
+        {/each}
+      </ul>
+    {/if}
+    <img class="detail-page-img" src={data.imageUrl} alt={data.imageAlt} />
     <p class="slug">Card: {page.params.slug}</p>
   </article>
 </main>

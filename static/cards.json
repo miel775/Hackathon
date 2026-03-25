@@ -9,8 +9,20 @@
   },
   {
     "id": "B",
-    "title": "B",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "Met wat voor doel is Chandra ontworpen?",
+    "subtitle": "Click here to find out.",
+    "content": "Chandra is ontworpen als een algemeen observatorium voor röntgenstraling waarmee astronomen naar hete gassen in het heelal kunnen kijken. Die gassen komen voor in de volgende objecten:",
+    "listItems": [
+      "Stellaire coronae: sterkransen",
+      "Atmosferen van witte dwergen",
+      "Binaire systemen: röntgendubbelsterren",
+      "Cataclysmisch variabelen: sterren die onregelmatige uitbarstingen of oplaaiingen vertonen",
+      "Actieve galactische kernen: actief slurpende superzware zwarte gaten in de centra van melkwegstelsels",
+      "Supernovarestanten: gassen die overblijven als een ster ontploft",
+      "Clusters van Melkwegstelsels: hete gassen die rond grote groepen sterrenstelsels hangen, ver in het heelal."
+    ],
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/03/chandra_letg2.gif",
+    "imageAlt": "An illustration of the Nebula Xplorer"
   },
   {
     "id": "C",
