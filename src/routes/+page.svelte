@@ -20,6 +20,26 @@
 
 <BlackHoleInfoPage cardConfigs={data.cards} />
 
+  <div id="giant-hole-wrapper">
     <Blackhole expanded={false} />
+  </div>
+
+<!-- <BlackHoleInfoPage cardConfigs={data.cards} /> -->
+
 
 <Viewtransition />
+
+<style>
+#giant-hole-wrapper {
+      position: fixed; 
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10; 
+  }
+
+
+</style>
