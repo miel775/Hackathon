@@ -1,5 +1,6 @@
 <script lang="ts">
   import BlackHole from "$lib/components/blackhole.svelte";
+  import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
 
   import "$lib/styles/home.css";
 
@@ -8,12 +9,12 @@
 
 <svelte:head>
   <title>Onderzoeksvragen</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
     rel="stylesheet"
   />
 </svelte:head>
 
-<BlackHole />
+<BlackHoleInfoPage cardConfigs={data.cards} />

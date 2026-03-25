@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import gsap from "gsap";
 
   type CardConfig = { id: string; title: string; subtitle: string };
   type CardState = CardConfig & {
@@ -134,27 +135,27 @@
   let canvas: HTMLCanvasElement;
   let frame = 0;
 
-  // function drawAccretionRing(ctx: CanvasRenderingContext2D) {
-  //   // Accretion "ring" (currently a single stroked arc segment).
-  //   // It's animated by moving the arc's start/end angles a bit every frame,
-  //   // which is why it can look less like a full torus/annulus effect.
-  //   ctx.strokeStyle = colorConfig.accretionRingStroke;
-  //   ctx.lineWidth = animationConfig.render.accretionRingWidth;
-  //   ctx.beginPath();
-  //   ctx.arc(
-  //     blackhole.x,
-  //     blackhole.y,
-  //     // Radius of the arc relative to the black hole size.
-  //     blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
-  //     // Start angle grows over time, creating the "sweeping" motion.
-  //     frame * animationConfig.render.accretionStartSpeed,
-  //     // End angle = a fixed sweep length + the same time-based rotation.
-  //     // sweepAngle controls how long the bright segment is.
-  //     Math.PI * animationConfig.render.accretionSweepAngle +
-  //       frame * animationConfig.render.accretionStartSpeed,
-  //   );
-  //   ctx.stroke();
-  // }
+  let textElement: SVGTextElement | null = null;
+
+  function drawAccretionRing(ctx: CanvasRenderingContext2D) {
+    // Accretion "ring" (currently a single stroked arc segment).
+    // It's animated by moving the arc's start/end angles a bit every frame.
+    ctx.strokeStyle = colorConfig.accretionRingStroke;
+    ctx.lineWidth = animationConfig.render.accretionRingWidth;
+    ctx.beginPath();
+    ctx.arc(
+      blackhole.x,
+      blackhole.y,
+      // Radius of the arc relative to the black hole size.
+      blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
+      // Start angle grows over time, creating the "sweeping" motion.
+      frame * animationConfig.render.accretionStartSpeed,
+      // End angle = a fixed sweep length + the same time-based rotation.
+      Math.PI * animationConfig.render.accretionSweepAngle +
+        frame * animationConfig.render.accretionStartSpeed,
+    );
+    ctx.stroke();
+  }
 
   function drawScene(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = colorConfig.spaceBackground;
@@ -183,7 +184,7 @@
     ctx.arc(blackhole.x, blackhole.y, blackhole.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // drawAccretionRing(ctx);
+    drawAccretionRing(ctx);
   }
 
   // Orbit slot layout
@@ -409,6 +410,16 @@
     }));
     physics = cards.map(() => makePhysics());
 
+    if (textElement) {
+      gsap.to(textElement, {
+        rotation: 360,
+        svgOrigin: "125 125",
+        duration: 10,
+        ease: "none",
+        repeat: -1,
+      });
+    }
+
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -439,6 +450,32 @@
 
 <main class="page">
   <canvas bind:this={canvas} class="space" aria-hidden="true"></canvas>
+  <a
+    class="blackhole-link"
+    href="/easteregg"
+    aria-label="Easter egg"
+    title="Easter egg"
+  >
+    <svg
+      id="blackhole"
+      data-name="Layer 1"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 250 250"
+    >
+      <path
+        id="circle-path"
+        d="M 25, 125 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
+        fill="none"
+      />
+      <circle cx="125" cy="125" r="100" class="ring-outline" />
+
+      <text class="orbit-text" bind:this={textElement}>
+        <textPath href="#circle-path" startOffset="5%">
+          Onderzoeksvragen
+        </textPath>
+      </text>
+    </svg>
+  </a>
   <section class="card-layer" aria-label="Onderzoeksvragen">
     {#each cards as card (card.id)}
       {#if !card.hidden}
@@ -483,11 +520,36 @@
   .space {
     position: absolute;
     inset: 0;
+    z-index: 0;
   }
   .card-layer {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 2;
+  }
+
+  .blackhole-link {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  #blackhole {
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    font-family: "Space Mono", monospace;
+    display: block;
+    overflow: visible;
+    width: 256px;
+    box-shadow: 0 0 50px 30px var(--secondary-color);
+    border-radius: 50%;
+  }
+
+  .orbit-text {
+    font-size: 32px;
   }
 
   .orbit-card {
