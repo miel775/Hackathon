@@ -14,69 +14,69 @@
 
   const animationConfig = {
     blackHole: {
-      radius: 44,
-      absorbRadius: 30,
-      gravity: 0.24,
+      radius: 44, // Base black hole size (also drives glow and ring placement).
+      absorbRadius: 30, // Distance where orbiting cards are considered “absorbed”.
+      gravity: 0.12, // Pull strength toward the center (affects entry/fall feel).
     },
     render: {
-      glowRadiusMultiplier: 2.6,
-      glowInnerRadiusMultiplier: 0.35,
-      accretionRingWidth: 1,
-      accretionRingRadiusMultiplier: 1.55,
-      accretionStartSpeed: 0.001,
-      accretionSweepAngle: 1.3,
+      glowRadiusMultiplier: 2.6, // Outer radial-gradient radius relative to blackHole.radius.
+      glowInnerRadiusMultiplier: 0.35, // Inner radial-gradient radius relative to blackHole.radius.
+      accretionRingWidth: 1, // Stroke width for the accretion ring
+      accretionRingRadiusMultiplier: 1.55, // Arc radius relative to blackHole.radius.
+      accretionStartSpeed: 0.001, // Per-frame speed for the ring’s start angle.
+      accretionSweepAngle: 1.3, // Arc length (radians) swept each frame.
     },
     orbitLayout: {
-      baseSlotsPerRing: 6,
-      minViewportSide: 200,
-      minOrbitRadius: 90,
-      maxOrbitRadius: 220,
-      orbitRadiusScale: 0.28,
-      minRingStep: 48,
-      maxRingStep: 110,
-      ringStepScale: 0.14,
-      xBoundaryPadding: 120,
-      yBoundaryPadding: 60,
-      radiusOffsetPattern: [-120, -40, 40, 120, -80, 80],
-      radiusOffsetRowIncrement: 30,
-      minimumCardOrbitRadius: 80,
+      baseSlotsPerRing: 6, // Default capacity: cards per ring before adding a new ring.
+      minViewportSide: 200, // Minimum canvas dimension used for responsive scaling.
+      minOrbitRadius: 90, // Lower bound for the first ring radius.
+      maxOrbitRadius: 220, // Upper bound for orbit radius scaling.
+      orbitRadiusScale: 0.28, // Multiplier to derive orbit radii from viewport size.
+      minRingStep: 48, // Lower bound for the spacing between rings.
+      maxRingStep: 110, // Upper bound for the spacing between rings.
+      ringStepScale: 0.14, // Multiplier to derive ring spacing from viewport size.
+      xBoundaryPadding: 120, // Horizontal padding to keep cards inside the canvas.
+      yBoundaryPadding: 60, // Vertical padding to keep cards inside the canvas.
+      radiusOffsetPattern: [-120, -40, 40, 120, -80, 80], // Per-slot radial jitter to stagger card positions.
+      radiusOffsetRowIncrement: 30, // Extra radial jitter per “row” (higher ring index).
+      minimumCardOrbitRadius: 80, // Clamp so cards never approach closer than this orbit radius.
     },
     entry: {
-      spawnMargin: 140,
-      additionalStartRadius: 160,
-      minimumStartRadius: 300,
-      minTurns: 0.55,
-      turnVariance: 0.35,
-      progressStep: 0.0014,
-      easingExponent: 0.85,
-      verticalDropOffset: 80,
+      spawnMargin: 140, // Off-screen margin for initial spawn positions.
+      additionalStartRadius: 160, // Extra radius added so each card starts further out.
+      minimumStartRadius: 300, // Clamp to ensure entry starts from a comfortable distance.
+      minTurns: 0.55, // Minimum number of orbit turns during the entry animation.
+      turnVariance: 0.35, // Random variation added to turns per card.
+      progressStep: 0.0014, // How quickly entry progress advances each frame.
+      easingExponent: 0.85, // Easing exponent shaping: how the entry speed ramps.
+      verticalDropOffset: 80, // Added vertical variation so entries aren’t perfectly symmetrical.
     },
     falling: {
-      minDistance: 0.001,
-      accelerationFactor: 0.35,
-      velocityDamping: 0.982,
-      minScale: 0.1,
-      scaleDecay: 0.975,
-      opacityDecay: 0.965,
+      minDistance: 0.001, // Threshold distance before considering the card “done”.
+      accelerationFactor: 0.25, // How quickly velocity changes while falling.
+      velocityDamping: 0.982, // Per-frame multiplier damping velocity for a smoother fall.
+      minScale: 0.1, // Smallest scale applied as cards shrink into the black hole.
+      scaleDecay: 0.995, // Per-frame multiplicative scale shrink.
+      opacityDecay: 0.965, // Per-frame multiplicative fade-out.
     },
     respawn: {
-      delayMs: 5000,
+      delayMs: 5000, // Wait time before spawning the next card after absorption.
     },
     orbitSpeed: {
-      base: 0.0002,
-      variance: 0.00025,
+      base: 0.0002, // Base tangential orbit speed.
+      variance: 0.00025, // Random additional orbit speed per card.
     },
   } as const;
 
   const colorConfig = {
-    spaceBackground: "#000",
-    blackHoleFill: "#030303",
+    spaceBackground: "#000", // Background color for the canvas.
+    blackHoleFill: "#030303", // Fill color of the black hole core disk.
     glowGradientStops: [
-      { stop: 0, color: "rgba(20,20,20,1)" },
-      { stop: 0.45, color: "rgba(63,38,89,0.6)" },
-      { stop: 1, color: "rgba(0,0,0,0)" },
+      { stop: 0, color: "rgba(20,20,20,1)" }, // 0 = inner radius color (brightest center).
+      { stop: 0.45, color: "rgba(63,38,89,0.6)" }, // Mid glow color (adds a purple tint).
+      { stop: 1, color: "rgba(0,0,0,0)" }, // 1 = outer radius (fully transparent).
     ],
-    accretionRingStroke: "rgba(128,90,255,0.4)",
+    accretionRingStroke: "rgba(128,90,255,0.4)", // Stroke color for the accretion arc (includes alpha).
   } as const;
 
   let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
@@ -140,20 +140,20 @@
   function drawAccretionRing(ctx: CanvasRenderingContext2D) {
     // Accretion "ring" (currently a single stroked arc segment).
     // It's animated by moving the arc's start/end angles a bit every frame.
-    ctx.strokeStyle = colorConfig.accretionRingStroke;
-    ctx.lineWidth = animationConfig.render.accretionRingWidth;
-    ctx.beginPath();
-    ctx.arc(
-      blackhole.x,
-      blackhole.y,
-      // Radius of the arc relative to the black hole size.
-      blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
-      // Start angle grows over time, creating the "sweeping" motion.
-      frame * animationConfig.render.accretionStartSpeed,
-      // End angle = a fixed sweep length + the same time-based rotation.
-      Math.PI * animationConfig.render.accretionSweepAngle +
-        frame * animationConfig.render.accretionStartSpeed,
-    );
+    // ctx.strokeStyle = colorConfig.accretionRingStroke;
+    // ctx.lineWidth = animationConfig.render.accretionRingWidth;
+    // ctx.beginPath();
+    // ctx.arc(
+    //   blackhole.x,
+    //   blackhole.y,
+    //   // Radius of the arc relative to the black hole size.
+    //   blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
+    //   // Start angle grows over time, creating the "sweeping" motion.
+    //   frame * animationConfig.render.accretionStartSpeed,
+    //   // End angle = a fixed sweep length + the same time-based rotation.
+    //   Math.PI * animationConfig.render.accretionSweepAngle +
+    //     frame * animationConfig.render.accretionStartSpeed,
+    // );
     ctx.stroke();
   }
 
@@ -261,7 +261,7 @@
       }
     });
   }
-// Spawn a card from the side of the screen
+  // Spawn a card from the side of the screen
   function spawnFromSide(card: CardState, physicsState: Physics) {
     const { spawnMargin } = animationConfig.entry;
     const side = Math.floor(Math.random() * 4);
@@ -563,7 +563,6 @@
   }
 
   .orbit-card.hovered {
-    /* hover state via CSS class, not JS scale lerp */
     transform: translate(-50%, -50%) scale(1.06) !important;
   }
 </style>
