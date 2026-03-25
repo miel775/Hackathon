@@ -2,7 +2,7 @@
     import gsap from 'gsap';
     import { onMount } from 'svelte';
 
-    let textElement;
+    let { expanded = false, textElement } = $props();
 
     onMount(() => {
         gsap.to(textElement, {
@@ -13,6 +13,8 @@
             repeat: -1    
         });
     });
+
+    let style;
 </script>
 
 <a href="/easteregg">
@@ -25,7 +27,7 @@
     
     <text class="orbit-text" bind:this={textElement}>
         <textPath href="#circle-path" startOffset="5%">
-            Onderzoeksvragen
+            Missies
         </textPath>
     </text>
     </svg>
