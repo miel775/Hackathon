@@ -1,5 +1,6 @@
 <script>
     import Viewtransition from "$lib/components/viewtransition.svelte";
+    import Blackhole from "$lib/components/blackhole.svelte";
     import "$lib/style.css";
 </script>
     <Viewtransition />
@@ -9,6 +10,7 @@
       <h1> The End </h1>
       <a href="/"> Go Back </a>
     </div>
+        <Blackhole expanded={true} />
     <style>
     #easter-egg-content {
       position: relative;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Blackhole from "$lib/components/blackhole.svelte";
   import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
   import Viewtransition from "$lib/components/viewtransition.svelte";
   import "$lib/styles/home.css";
@@ -19,5 +20,6 @@
 
 <BlackHoleInfoPage cardConfigs={data.cards} />
 
+    <Blackhole expanded={false} />
 
 <Viewtransition />
