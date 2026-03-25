@@ -1,8 +1,8 @@
 <script lang="ts">
-  import BlackHole from "$lib/components/blackhole.svelte";
   import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
-
+  import Viewtransition from "$lib/components/viewtransition.svelte";
   import "$lib/styles/home.css";
+  import "$lib/style.css";
 
   let { data } = $props();
 </script>
@@ -18,3 +18,6 @@
 </svelte:head>
 
 <BlackHoleInfoPage cardConfigs={data.cards} />
+
+
+<Viewtransition />
