@@ -251,9 +251,10 @@
       physicsState.orbitAngle = Math.atan2(dy, dx);
 
       if (initial) {
-        spawnFromSide(card, physicsState);
-
-        beginEntry(card, physicsState);
+        card.x = slot.x;
+        card.y = slot.y;
+        physicsState.entering = false;
+        physicsState.falling = false;
       } else if (!physicsState.falling) {
         card.x = slot.x;
         card.y = slot.y;
