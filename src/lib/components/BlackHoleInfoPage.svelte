@@ -533,7 +533,7 @@
     overflow: hidden;
   }
   .space {
-    position: absolute;
+    /* position: absolute; */
     inset: 0;
     z-index: 0;
   }
