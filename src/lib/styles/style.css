@@ -23,6 +23,7 @@ body {
   background-color: var(--primary-color);
   color: var(--neutral-color-white);
   font-family: "Space Mono";
+  overflow: hidden;
 }
 
 button {
@@ -30,6 +31,13 @@ button {
   cursor: pointer;
 }
 
+@keyframes slide-to-the-right {
+  from{ transform: translateX(-100%); }
+}
+
+@keyframes slide-to-the-left {
+  to{ transform: translateX(100%); }
+}
 
 
  @keyframes rotation {

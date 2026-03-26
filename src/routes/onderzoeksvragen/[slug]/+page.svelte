@@ -1,6 +1,8 @@
 <script lang="ts">
   import { page } from "$app/state";
   import "$lib/styles/detail.css";
+  import Viewtransition from "$lib/components/viewtransition.svelte";
+
   import "$lib/styles/style.css"
 
   type DetailData = {
@@ -19,6 +21,7 @@
   <title>{data.title} | Onderzoeksvragen</title>
 </svelte:head>
 
+<Viewtransition />
 <main class="detail-page">
   <a class="back-link" href="/">🚀 Back to overview</a>
   <article class="card">
@@ -35,3 +38,4 @@
     <p class="slug">Card: {page.params.slug}</p>
   </article>
 </main>
+
