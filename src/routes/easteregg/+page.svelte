@@ -1,6 +1,7 @@
 <script>
     import Viewtransition from "$lib/components/viewtransition.svelte";
     import Blackhole from "$lib/components/blackhole.svelte";
+    import Alien from "$lib/components/aliencomponent.svelte";
     import "$lib/style.css";
 </script>
     <Viewtransition />
@@ -15,7 +16,10 @@
         <Blackhole expanded={true} />
     </div>
 
-    <style>
+    <Alien />
+
+
+<style>
     h1 {
       color: red;
       font-size: 72px;
