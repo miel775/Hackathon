@@ -60,8 +60,8 @@
     orbitLayout: {
       baseSlotsPerRing: 6, // Default capacity: cards per ring before adding a new ring.
       minViewportSide: 200, // Minimum canvas dimension used for responsive scaling.
-      minOrbitRadius: 100, // Lower bound for the first ring radius.
-      maxOrbitRadius: 220, // Upper bound for orbit radius scaling.
+      minOrbitRadius: 200, // Lower bound for the first ring radius.
+      maxOrbitRadius: 420, // Upper bound for orbit radius scaling.
       orbitRadiusScale: 0.28, // Multiplier to derive orbit radii from viewport size.
       minRingStep: 48, // Lower bound for the spacing between rings.
       maxRingStep: 110, // Upper bound for the spacing between rings.
