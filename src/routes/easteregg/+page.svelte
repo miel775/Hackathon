@@ -8,15 +8,18 @@
 
 
     <div id="easter-egg-content">
-      <h1> The End </h1>
-      <a href="/"> Go Back </a>
+        <Alien />
+        <div id="easter-egg-text">
+          <h1> The End </h1>
+          <a href="/"> Go Back </a>
+        </div>
     </div>
 
     <div id="giant-hole-wrapper">
         <Blackhole expanded={true} />
     </div>
 
-    <Alien />
+
 
 
 <style>
@@ -28,10 +31,10 @@
     a {
       width: 12em;
       height: 3em;
-      background-color: var(--primary-color-dark);
-      color: var(--secondary-color);
+      background-color: #196600;
+      color: var(--neutral-color-white);
       padding: 1em;
-      border: solid 2px var(--secondary-color);
+      border: solid 2px red;
       text-decoration: none;
     }
 
@@ -43,18 +46,35 @@
         z-index: -1;
         pointer-events: none;
         display: flex; 
+        flex-direction: column;
         align-items: center;
         justify-content: center;
     }
 
     #easter-egg-content {
-      position: relative;
-      z-index: 10;
+      display: grid;
+      place-items: center;
       height: 100vh;
+      margin-top: 5em;
+    }
+
+    #easter-egg-text {
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
+      animation: toabove 0.4s forwards;
+       animation-delay: 3s;
+       transform: translateY(150%);
+    }
+
+    @keyframes toabove {
+      from {
+        transform:  translateY(150%);
+      }
+
+      to {
+        transform: translateY(0%);
+      }
     }
 
     </style>
