@@ -4,6 +4,10 @@
     import Alien from "$lib/components/aliencomponent.svelte";
     import "$lib/style.css";
 </script>
+
+  <svelte:head>
+    <title>Surprise an alien</title>
+  </svelte:head>
     <Viewtransition />
 
 
@@ -29,13 +33,16 @@
     }
 
     a {
-      width: 12em;
-      height: 3em;
+      margin-left: 4em;
+      width: 8em;
+      height: 2em;
       background-color: #196600;
       color: var(--neutral-color-white);
       padding: 1em;
       border: solid 2px red;
       text-decoration: none;
+      display: flex;
+      justify-content: center;
     }
 
 #giant-hole-wrapper {

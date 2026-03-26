@@ -224,6 +224,7 @@ masterTl
   stroke: #000;
   stroke-width: 1px;
   box-shadow: 0px 0px 105px 45px rgba(45,255,196,0.9);
+      box-shadow: 0px 0px 64px 9px rgba(255,46,46,0.9);
 }
 
 #rightarm, #leftarm, #leftleg, #rightleg {
