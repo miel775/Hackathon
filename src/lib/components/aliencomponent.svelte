@@ -1,9 +1,11 @@
 <script>
 import gsap from 'gsap';
 import { onMount } from 'svelte';
-import gsap from 'gsap-trial';
 import MorphSVGPlugin from 'gsap-trial/dist/MorphSVGPlugin';
 
+import step1Src from '$lib/assets/audio/step-1.mp3';
+import step2Src from '$lib/assets/audio/step-2.mp3';
+import sighSrc from '$lib/assets/audio/alien-sigh.mp3';
 
 onMount(() => {
 
@@ -238,6 +240,48 @@ masterTl
 
 #left-eye, #right-eye {
   fill: red;
+}
+
+
+
+
+@media (max-width: 720px) {
+
+    #alien {
+  height: 400px;
+  position: absolute;
+  left: 35%;
+  top: 10%;
+  animation: totheright 3s linear;
+}
+    @keyframes totheright {
+        from {
+            left: -30%;
+        }
+        to {
+            left: 35%;
+        }
+
+    }
+}
+
+@media (min-width: 1080px) {
+
+        #alien {
+  height: 400px;
+  position: absolute;
+  left: 45%;
+  top: 10%;
+  animation: totheright 3s linear;
+}
+    @keyframes totheright {
+        from {
+            left: -30%;
+        }
+        to {
+            left: 45%;
+        }
+    }
 }
 
 
