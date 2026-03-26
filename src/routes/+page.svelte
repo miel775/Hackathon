@@ -1,8 +1,9 @@
 <script lang="ts">
-  import BlackHole from "$lib/components/blackhole.svelte";
+  import Blackhole from "$lib/components/blackhole.svelte";
   import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
-
+  import Viewtransition from "$lib/components/viewtransition.svelte";
   import "$lib/styles/home.css";
+  import "$lib/style.css";
 
   let { data } = $props();
 </script>
@@ -17,4 +18,26 @@
   />
 </svelte:head>
 
-<BlackHoleInfoPage cardConfigs={data.cards} />
+  <div id="giant-hole-wrapper">
+    <Blackhole expanded={false} />
+  </div>
+
+<!-- <BlackHoleInfoPage cardConfigs={data.cards} /> -->
+
+
+<Viewtransition />
+
+<style>
+#giant-hole-wrapper {
+      position: fixed; 
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10; 
+  }
+
+
+</style>
