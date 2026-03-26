@@ -22,7 +22,6 @@
   <a class="back-link" href="/">🚀 Back to overview</a>
   <article class="card">
     <h1>{data.title}</h1>
-    <!-- <p>{@html data.body}</p> -->
     <p>{data.content}</p>
     {#if data.listItems}
       <ul>
