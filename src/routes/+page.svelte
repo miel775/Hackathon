@@ -18,12 +18,9 @@
   />
 </svelte:head>
 
-  <div id="giant-hole-wrapper">
-    <Blackhole expanded={false} />
-  </div>
-
-<!-- <BlackHoleInfoPage cardConfigs={data.cards} /> -->
-
+<div id="giant-hole-wrapper">
+<BlackHoleInfoPage cardConfigs={data.cards} expanded={false} />
+</div>
 
 <Viewtransition />
 

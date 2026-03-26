@@ -14,7 +14,7 @@
 
   const animationConfig = {
     blackHole: {
-      radius: 44, // Base black hole size (also drives glow and ring placement).
+      radius: 18, // Base black hole size (also drives glow and ring placement).
       absorbRadius: 30, // Distance where orbiting cards are considered “absorbed”.
       gravity: 0.12, // Pull strength toward the center (affects entry/fall feel).
     },
@@ -24,7 +24,7 @@
       accretionRingWidth: 1, // Stroke width for the accretion ring
       accretionRingRadiusMultiplier: 3.55, // Arc radius relative to blackHole.radius.
       accretionRingRadius: 5,
-      accretionRingGrowthRate: 20,
+      accretionRingGrowthRate: 0,
       accretionRingInitialAngle: 100,
       accretionRingAngleStep: 0.1,
 
@@ -84,7 +84,10 @@
     ],
     accretionRingStroke: "rgba(128,90,255,0.4)", // Stroke color for the accretion arc (includes alpha).
   } as const;
-  let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
+  let { cardConfigs = [], expanded = false } = $props<{
+    cardConfigs: CardConfig[];
+    expanded: boolean;
+  }>();
 
   // Black hole config
   const blackhole = {
@@ -140,7 +143,7 @@
   let canvas: HTMLCanvasElement;
   let frame = 0;
 
-  let textElement: SVGTextElement | null = null;
+  let textElement = $state<SVGTextElement | null>(null);
 
   function drawAccretionRing(ctx: CanvasRenderingContext2D) {
     // Accretion "ring" (currently a single stroked arc segment).
@@ -464,14 +467,37 @@
 
 <main class="page">
   <canvas bind:this={canvas} class="space" aria-hidden="true"></canvas>
-  <a
-    class="blackhole-link"
-    href="/easteregg"
-    aria-label="Easter egg"
-    title="Easter egg"
-  >
+  {#if !expanded}
+    <a
+      class="blackhole-link"
+      href="/easteregg"
+      aria-label="Easter egg"
+      title="Easter egg"
+    >
+      <svg
+        id="blackhole"
+        data-name="Layer 1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 250 250"
+      >
+        <path
+          id="circle-path"
+          d="M 25, 125 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
+          fill="none"
+        />
+        <circle cx="125" cy="125" r="100" class="ring-outline" />
+
+        <text class="orbit-text" bind:this={textElement}>
+          <textPath href="#circle-path" startOffset="5%">
+            Onderzoeksvragen
+          </textPath>
+        </text>
+      </svg>
+    </a>
+  {:else}
     <svg
       id="blackhole"
+      class="expanded"
       data-name="Layer 1"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 250 250"
@@ -481,7 +507,7 @@
         d="M 25, 125 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
         fill="none"
       />
-      <circle cx="125" cy="125" r="100" class="ring-outline" />
+      <circle cx="125" cy="125" r="100" class="ring-outline fill-black" />
 
       <text class="orbit-text" bind:this={textElement}>
         <textPath href="#circle-path" startOffset="5%">
@@ -489,7 +515,7 @@
         </textPath>
       </text>
     </svg>
-  </a>
+  {/if}
   <section class="card-layer" aria-label="Onderzoeksvragen">
     {#each cards as card (card.id)}
       {#if !card.hidden}
@@ -559,6 +585,21 @@
     width: 256px;
     box-shadow: 0 0 50px 30px var(--secondary-color);
     border-radius: 50%;
+    view-transition-name: blackhole-morph;
+  }
+
+  #blackhole.expanded {
+    width: max(200vw, 200vh);
+    height: max(200vw, 200vh);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  #blackhole.expanded .fill-black {
+    fill: var(--primary-color-dark);
   }
 
   .orbit-text {
