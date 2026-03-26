@@ -69,12 +69,12 @@
       justify-content: center;
       animation: toabove 0.4s forwards;
        animation-delay: 3s;
-       transform: translateY(150%);
+       transform: translateY(300%);
     }
 
     @keyframes toabove {
       from {
-        transform:  translateY(150%);
+        transform:  translateY(300%);
       }
 
       to {
