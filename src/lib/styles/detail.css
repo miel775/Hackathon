@@ -1,9 +1,9 @@
-body {
-  overflow: unset !important;
-}
-
 .detail-page {
+  height: 100dvh;
   min-height: 100dvh;
+  overflow-y: auto;
+
+  box-sizing: border-box;
   display: grid;
   place-content: center;
   gap: 1rem;
