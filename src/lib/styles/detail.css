@@ -1,8 +1,7 @@
 .detail-page {
   height: 100dvh;
   min-height: 100dvh;
-  overflow-y: auto;
-
+  overflow-y: scroll;
   box-sizing: border-box;
   display: grid;
   place-content: center;
@@ -31,6 +30,8 @@
 .card {
   width: min(680px, 90vw);
   padding: 1.25rem;
+  height: 50vh;
+  overflow-y: scroll;
   border-radius: 14px;
   border: 1px solid rgb(255 255 255 / 18%);
   background: rgb(20 20 30 / 78%);
