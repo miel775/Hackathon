@@ -1,11 +1,11 @@
-:root {
+body {
   --primary-color-dark: hsl(238, 35%, 10%);
   --primary-color: hsl(238, 35%, 15%);
   --primary-color-light: hsl(238, 35%, 20%);
 
-  --secondary-color-dark: hsl(13, 36%, 77%);
-  --secondary-color: hsl(13, 36%, 82%);
-  --secondary-color-light: hsl(13, 36%, 87%);
+  --secondary-color-dark: hsl(13, 82%, 51%);
+  --secondary-color: hsl(13, 82%, 56%);
+  --secondary-color-light: hsl(13, 82%, 61%);
 
   --neutral-color-black: hsl(0, 0%, 0%);
   --neutral-color-darkgrey: hsl(0, 0%, 25%);
@@ -16,13 +16,14 @@
 
 
 body {
-  font-family: Arial, sans-serif;
-  max-width: 720px;
+  width: 100vw;
+  height: 100vh;
   margin: 2rem auto;
   padding: 0 1rem;
   background-color: var(--primary-color);
   color: var(--neutral-color-white);
   font-family: "Space Mono";
+  overflow: hidden;
 }
 
 button {
@@ -30,6 +31,13 @@ button {
   cursor: pointer;
 }
 
+@keyframes slide-to-the-right {
+  from{ transform: translateX(-100%); }
+}
+
+@keyframes slide-to-the-left {
+  to{ transform: translateX(100%); }
+}
 
 
  @keyframes rotation {

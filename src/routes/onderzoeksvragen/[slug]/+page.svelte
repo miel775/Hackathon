@@ -1,10 +1,17 @@
 <script lang="ts">
   import { page } from "$app/state";
   import "$lib/styles/detail.css";
+  import Viewtransition from "$lib/components/viewtransition.svelte";
+
+  import "$lib/styles/style.css"
 
   type DetailData = {
     title: string;
     body: string;
+    content: string;
+    imageUrl: string;
+    imageAlt: string;
+    listItems?: string[];
   };
 
   let { data } = $props<{ data: DetailData }>();
@@ -14,11 +21,21 @@
   <title>{data.title} | Onderzoeksvragen</title>
 </svelte:head>
 
+<Viewtransition />
 <main class="detail-page">
-  <a class="back-link" href="/">← Back to overview</a>
+  <a class="back-link" href="/">🚀 Back to overview</a>
   <article class="card">
     <h1>{data.title}</h1>
-    <p>{@html data.body}</p>
-    <p class="slug">Slug: {page.params.slug}</p>
+    <p>{data.content}</p>
+    {#if data.listItems}
+      <ul>
+        {#each data.listItems as item}
+          <li>{item}</li>
+        {/each}
+      </ul>
+    {/if}
+    <img class="detail-page-img" src={data.imageUrl} alt={data.imageAlt} />
+    <p class="slug">Card: {page.params.slug}</p>
   </article>
 </main>
+

@@ -12,74 +12,92 @@
     hovered: boolean;
   };
 
+  function createSlug(text: string) {
+    if (!text) return "";
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
   const animationConfig = {
     blackHole: {
-      radius: 44,
-      absorbRadius: 30,
-      gravity: 0.24,
+      radius: 18, // Base black hole size (also drives glow and ring placement).
+      absorbRadius: 30, // Distance where orbiting cards are considered “absorbed”.
+      gravity: 0.12, // Pull strength toward the center (affects entry/fall feel).
     },
     render: {
-      glowRadiusMultiplier: 2.6,
-      glowInnerRadiusMultiplier: 0.35,
-      accretionRingWidth: 1,
-      accretionRingRadiusMultiplier: 1.55,
-      accretionStartSpeed: 0.001,
-      accretionSweepAngle: 1.3,
+      glowRadiusMultiplier: 7.0, // Outer radial-gradient radius relative to blackHole.radius.
+      glowInnerRadiusMultiplier: 0.05, // Inner radial-gradient radius relative to blackHole.radius.
+      accretionRingWidth: 1, // Stroke width for the accretion ring
+      accretionRingRadiusMultiplier: 3.55, // Arc radius relative to blackHole.radius.
+      accretionRingRadius: 5,
+      accretionRingGrowthRate: 0,
+      accretionRingInitialAngle: 100,
+      accretionRingAngleStep: 0.1,
+
+      accretionStartSpeed: 0.001, // Per-frame speed for the ring’s start angle.
+      accretionSweepAngle: 1.3, // Arc length (radians) swept each frame.
     },
     orbitLayout: {
-      baseSlotsPerRing: 6,
-      minViewportSide: 200,
-      minOrbitRadius: 90,
-      maxOrbitRadius: 220,
-      orbitRadiusScale: 0.28,
-      minRingStep: 48,
-      maxRingStep: 110,
-      ringStepScale: 0.14,
-      xBoundaryPadding: 120,
-      yBoundaryPadding: 60,
-      radiusOffsetPattern: [-120, -40, 40, 120, -80, 80],
-      radiusOffsetRowIncrement: 30,
-      minimumCardOrbitRadius: 80,
+      baseSlotsPerRing: 6, // Default capacity: cards per ring before adding a new ring.
+      minViewportSide: 200, // Minimum canvas dimension used for responsive scaling.
+      minOrbitRadius: 100, // Lower bound for the first ring radius.
+      maxOrbitRadius: 220, // Upper bound for orbit radius scaling.
+      orbitRadiusScale: 0.28, // Multiplier to derive orbit radii from viewport size.
+      minRingStep: 48, // Lower bound for the spacing between rings.
+      maxRingStep: 110, // Upper bound for the spacing between rings.
+      ringStepScale: 0.14, // Multiplier to derive ring spacing from viewport size.
+      xBoundaryPadding: 120, // Horizontal padding to keep cards inside the canvas.
+      yBoundaryPadding: 60, // Vertical padding to keep cards inside the canvas.
+      radiusOffsetPattern: [-120, -40, 40, 120, -80, 80], // Per-slot radial jitter to stagger card positions.
+      radiusOffsetRowIncrement: 30, // Extra radial jitter per “row” (higher ring index).
+      minimumCardOrbitRadius: 80, // Clamp so cards never approach closer than this orbit radius.
     },
     entry: {
-      spawnMargin: 140,
-      additionalStartRadius: 160,
-      minimumStartRadius: 300,
-      minTurns: 0.55,
-      turnVariance: 0.35,
-      progressStep: 0.0014,
-      easingExponent: 0.85,
-      verticalDropOffset: 80,
+      spawnMargin: 140, // Off-screen margin for initial spawn positions.
+      additionalStartRadius: 160, // Extra radius added so each card starts further out.
+      minimumStartRadius: 400, // Clamp to ensure entry starts from a comfortable distance.
+      minTurns: 0.55, // Minimum number of orbit turns during the entry animation.
+      turnVariance: 0.35, // Random variation added to turns per card.
+      progressStep: 0.00014, // How quickly entry progress advances each frame.
+      easingExponent: 0.95, // Easing exponent shaping: how the entry speed ramps.
+      verticalDropOffset: 80, // Added vertical variation so entries aren’t perfectly symmetrical.
     },
     falling: {
-      minDistance: 0.001,
-      accelerationFactor: 0.35,
-      velocityDamping: 0.982,
-      minScale: 0.1,
-      scaleDecay: 0.975,
-      opacityDecay: 0.965,
+      minDistance: 0.001, // Threshold distance before considering the card “done”.
+      accelerationFactor: 0.25, // How quickly velocity changes while falling.
+      velocityDamping: 0.982, // Per-frame multiplier damping velocity for a smoother fall.
+      minScale: 0.1, // Smallest scale applied as cards shrink into the black hole.
+      scaleDecay: 0.995, // Per-frame multiplicative scale shrink.
+      opacityDecay: 0.965, // Per-frame multiplicative fade-out.
     },
     respawn: {
-      delayMs: 5000,
+      delayMs: 5000, // Wait time before spawning the next card after absorption.
     },
     orbitSpeed: {
-      base: 0.0002,
-      variance: 0.00025,
+      base: 0.0002, // Base tangential orbit speed.
+      variance: 0.00025, // Random additional orbit speed per card.
     },
   } as const;
 
   const colorConfig = {
-    spaceBackground: "#000",
-    blackHoleFill: "#030303",
+    spaceBackground: "#000", // Background color for the canvas.
+    blackHoleFill: "#030303", // Fill color of the black hole core disk.
     glowGradientStops: [
-      { stop: 0, color: "rgba(20,20,20,1)" },
-      { stop: 0.45, color: "rgba(63,38,89,0.6)" },
-      { stop: 1, color: "rgba(0,0,0,0)" },
+      { stop: 0, color: "rgba(20,20,20,1)" }, // 0 = inner radius color.
+      { stop: 0.45, color: "rgba(248, 132, 12,0.3)" }, // Mid glow color.
+      { stop: 0.65, color: "rgba(248, 132, 12,0.2)" }, // Outer middle glow color.
+      { stop: 1, color: "rgba(0,0,0,0)" }, // 1 = outer radius.
     ],
-    accretionRingStroke: "rgba(128,90,255,0.4)",
+    accretionRingStroke: "rgba(128,90,255,0.4)", // Stroke color for the accretion arc (includes alpha).
   } as const;
-
-  let { cardConfigs = [] } = $props<{ cardConfigs?: CardConfig[] }>();
+  let { cardConfigs = [], expanded = false } = $props<{
+    cardConfigs: CardConfig[];
+    expanded: boolean;
+  }>();
 
   // Black hole config
   const blackhole = {
@@ -135,25 +153,29 @@
   let canvas: HTMLCanvasElement;
   let frame = 0;
 
-  let textElement: SVGTextElement | null = null;
+  let textElement = $state<SVGTextElement | null>(null);
 
   function drawAccretionRing(ctx: CanvasRenderingContext2D) {
     // Accretion "ring" (currently a single stroked arc segment).
     // It's animated by moving the arc's start/end angles a bit every frame.
+
+    const growthRate = animationConfig.render.accretionRingGrowthRate;
     ctx.strokeStyle = colorConfig.accretionRingStroke;
     ctx.lineWidth = animationConfig.render.accretionRingWidth;
-    ctx.beginPath();
-    ctx.arc(
-      blackhole.x,
-      blackhole.y,
-      // Radius of the arc relative to the black hole size.
-      blackhole.radius * animationConfig.render.accretionRingRadiusMultiplier,
-      // Start angle grows over time, creating the "sweeping" motion.
-      frame * animationConfig.render.accretionStartSpeed,
-      // End angle = a fixed sweep length + the same time-based rotation.
-      Math.PI * animationConfig.render.accretionSweepAngle +
-        frame * animationConfig.render.accretionStartSpeed,
-    );
+
+    let angleStep = animationConfig.render.accretionRingAngleStep;
+    let angle = animationConfig.render.accretionRingInitialAngle;
+    const centerX = blackhole.x;
+    const centerY = blackhole.y;
+
+    let currentAngle = 0;
+    while (currentAngle < angle) {
+      const radius = growthRate * currentAngle;
+      const x = centerX + radius * Math.cos(currentAngle);
+      const y = centerY + radius * Math.sin(currentAngle);
+      ctx.lineTo(x, y);
+      currentAngle += angleStep;
+    }
     ctx.stroke();
   }
 
@@ -245,15 +267,16 @@
       const dx = slot.x - blackhole.x,
         dy = slot.y - blackhole.y;
       physicsState.orbitRadius = Math.max(
-        80,
+        animationConfig.orbitLayout.minOrbitRadius,
         Math.hypot(dx, dy) + radiusOffset,
       );
       physicsState.orbitAngle = Math.atan2(dy, dx);
 
       if (initial) {
-        spawnFromSide(card, physicsState);
-
-        beginEntry(card, physicsState);
+        card.x = slot.x;
+        card.y = slot.y;
+        physicsState.entering = false;
+        physicsState.falling = false;
       } else if (!physicsState.falling) {
         card.x = slot.x;
         card.y = slot.y;
@@ -261,7 +284,7 @@
       }
     });
   }
-// Spawn a card from the side of the screen
+  // Spawn a card from the side of the screen
   function spawnFromSide(card: CardState, physicsState: Physics) {
     const { spawnMargin } = animationConfig.entry;
     const side = Math.floor(Math.random() * 4);
@@ -284,7 +307,11 @@
     const dx = card.x - blackhole.x;
     const dy = card.y - blackhole.y;
 
+    // Use the card's actual spawn distance as the starting radius.
+    const spawnDist = Math.hypot(dx, dy);
+
     physicsState.startOrbitRadius = Math.max(
+      spawnDist,
       physicsState.orbitRadius + animationConfig.entry.additionalStartRadius,
       animationConfig.entry.minimumStartRadius,
     );
@@ -450,14 +477,37 @@
 
 <main class="page">
   <canvas bind:this={canvas} class="space" aria-hidden="true"></canvas>
-  <a
-    class="blackhole-link"
-    href="/easteregg"
-    aria-label="Easter egg"
-    title="Easter egg"
-  >
+  {#if !expanded}
+    <a
+      class="blackhole-link"
+      href="/easteregg"
+      aria-label="Easter egg"
+      title="Easter egg"
+    >
+      <svg
+        id="blackhole"
+        data-name="Layer 1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 250 250"
+      >
+        <path
+          id="circle-path"
+          d="M 25, 125 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
+          fill="none"
+        />
+        <circle cx="125" cy="125" r="100" class="ring-outline" />
+
+        <text class="orbit-text" bind:this={textElement}>
+          <textPath href="#circle-path" startOffset="5%">
+            Onderzoeksvragen
+          </textPath>
+        </text>
+      </svg>
+    </a>
+  {:else}
     <svg
       id="blackhole"
+      class="expanded"
       data-name="Layer 1"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 250 250"
@@ -467,7 +517,7 @@
         d="M 25, 125 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
         fill="none"
       />
-      <circle cx="125" cy="125" r="100" class="ring-outline" />
+      <circle cx="125" cy="125" r="100" class="ring-outline fill-black" />
 
       <text class="orbit-text" bind:this={textElement}>
         <textPath href="#circle-path" startOffset="5%">
@@ -475,14 +525,14 @@
         </textPath>
       </text>
     </svg>
-  </a>
+  {/if}
   <section class="card-layer" aria-label="Onderzoeksvragen">
-    {#each cards as card (card.id)}
+    {#each cards as card (card.title)}
       {#if !card.hidden}
         <a
           class="orbit-card"
           class:hovered={card.hovered}
-          href={`/onderzoeksvragen/${card.id}`}
+          href={`/onderzoeksvragen/${createSlug(card.title)}`}
           style:left="{card.x}px"
           style:top="{card.y}px"
           style:transform="translate(-50%, -50%) scale({card.scale})"
@@ -511,14 +561,8 @@
 </main>
 
 <style>
-  .page {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
   .space {
-    position: absolute;
+    /* position: absolute; */
     inset: 0;
     z-index: 0;
   }
@@ -534,11 +578,13 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    overflow: visible;
     z-index: 1;
+    box-shadow: 0 0 50px 30px var(--secondary-color);
+    border-radius: 50%;
   }
 
   #blackhole {
-    stroke: #fff;
     stroke-miterlimit: 10;
     font-family: "Space Mono", monospace;
     display: block;
@@ -546,24 +592,37 @@
     width: 256px;
     box-shadow: 0 0 50px 30px var(--secondary-color);
     border-radius: 50%;
+    view-transition-name: blackhole-morph;
+  }
+
+  #blackhole.expanded {
+    width: max(200vw, 200vh);
+    height: max(200vw, 200vh);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  #blackhole.expanded .fill-black {
+    fill: var(--primary-color-dark);
   }
 
   .orbit-text {
+    stroke: var(--neutral-color-white);
     font-size: 32px;
   }
 
   .orbit-card {
     position: absolute;
     pointer-events: all;
-    /* CSS handles scale/opacity recovery — no JS lerp needed */
     transition:
       transform 0.25s ease,
       opacity 0.3s ease;
-    /* ... your card styles ... */
   }
 
   .orbit-card.hovered {
-    /* hover state via CSS class, not JS scale lerp */
     transform: translate(-50%, -50%) scale(1.06) !important;
   }
 </style>
