@@ -3,14 +3,30 @@
   import gsap from "gsap";
 
   type CardConfig = { id: string; title: string; subtitle: string };
-  type CardState = CardConfig & {
+
+  type OrbitVisualState = {
     x: number;
     y: number;
     scale: number;
     opacity: number;
     hidden: boolean;
-    hovered: boolean;
+    initialScale: number;
   };
+
+  type CardState = CardConfig &
+    OrbitVisualState & {
+      hovered: boolean;
+    };
+
+  type SatelliteConfig = {
+    id: string;
+    emoji?: string;
+    src?: string;
+    alt?: string;
+    scale?: number;
+  };
+
+  type SatelliteState = SatelliteConfig & OrbitVisualState;
 
   function createSlug(text: string) {
     if (!text) return "";
@@ -94,9 +110,14 @@
     ],
     accretionRingStroke: "rgba(128,90,255,0.4)", // Stroke color for the accretion arc (includes alpha).
   } as const;
-  let { cardConfigs = [], expanded = false } = $props<{
+  let {
+    cardConfigs = [],
+    expanded = false,
+    satelliteConfigs,
+  } = $props<{
     cardConfigs: CardConfig[];
     expanded: boolean;
+    satelliteConfigs: SatelliteConfig[];
   }>();
 
   // Black hole config
@@ -107,6 +128,19 @@
     absorbRadius: animationConfig.blackHole.absorbRadius,
     gravity: animationConfig.blackHole.gravity,
   };
+
+  async function loadSatelliteConfigs(): Promise<SatelliteConfig[]> {
+    try {
+      const res = await fetch("/sattelites.json");
+      if (!res.ok) return fallbackSatelliteConfigs;
+      const data = (await res.json()) as SatelliteConfig[];
+      return Array.isArray(data) && data.length
+        ? data
+        : fallbackSatelliteConfigs;
+    } catch {
+      return fallbackSatelliteConfigs;
+    }
+  }
 
   // Internal per-card physics
   type Physics = {
@@ -147,7 +181,9 @@
 
   // Reactive display state (drives Svelte style: directives)
   let cards = $state<CardState[]>([]);
-  let physics: Physics[] = [];
+  let satellites = $state<SatelliteState[]>([]);
+  let cardPhysics: Physics[] = [];
+  let satellitePhysics: Physics[] = [];
 
   // Canvas / renderer
   let canvas: HTMLCanvasElement;
@@ -252,20 +288,33 @@
     };
   }
 
-  function layoutCards(initial: boolean) {
-    const total = cards.length;
+  function layoutOrbit(
+    initial: boolean,
+    orbiters: OrbitVisualState[],
+    orbitPhysicsStates: Physics[],
+    slotIndexStart: number,
+    slotTotal: number,
+  ) {
     const offsets = animationConfig.orbitLayout.radiusOffsetPattern;
+    if (slotTotal <= 0) return;
 
-    cards.forEach((card, i) => {
-      if (card.hidden) return;
-      const physicsState = physics[i];
-      const slot = getOrbitSlot(i, total);
+    orbiters.forEach((orbiter, i) => {
+      if (orbiter.hidden) return;
+
+      const physicsState = orbitPhysicsStates[i];
+      if (!physicsState) return;
+
+      const globalIndex = slotIndexStart + i;
+      const slot = getOrbitSlot(globalIndex, slotTotal);
+
       const radiusOffset =
-        offsets[i % offsets.length] +
-        Math.floor(i / offsets.length) *
+        offsets[globalIndex % offsets.length] +
+        Math.floor(globalIndex / offsets.length) *
           animationConfig.orbitLayout.radiusOffsetRowIncrement;
-      const dx = slot.x - blackhole.x,
-        dy = slot.y - blackhole.y;
+
+      const dx = slot.x - blackhole.x;
+      const dy = slot.y - blackhole.y;
+
       physicsState.orbitRadius = Math.max(
         animationConfig.orbitLayout.minOrbitRadius,
         Math.hypot(dx, dy) + radiusOffset,
@@ -273,28 +322,29 @@
       physicsState.orbitAngle = Math.atan2(dy, dx);
 
       if (initial) {
-        card.x = slot.x;
-        card.y = slot.y;
+        orbiter.x = slot.x;
+        orbiter.y = slot.y;
         physicsState.entering = false;
         physicsState.falling = false;
       } else if (!physicsState.falling) {
-        card.x = slot.x;
-        card.y = slot.y;
+        orbiter.x = slot.x;
+        orbiter.y = slot.y;
         physicsState.entering = false;
       }
     });
   }
-  // Spawn a card from the side of the screen
-  function spawnFromSide(card: CardState, physicsState: Physics) {
+
+  // Spawn an orbiter from the side of the screen
+  function spawnFromSide(orbiter: OrbitVisualState) {
     const { spawnMargin } = animationConfig.entry;
     const side = Math.floor(Math.random() * 4);
-    card.x =
+    orbiter.x =
       side === 0
         ? -spawnMargin
         : side === 1
           ? canvas.width + spawnMargin
           : Math.random() * canvas.width;
-    card.y =
+    orbiter.y =
       side === 2
         ? -spawnMargin
         : side === 3
@@ -303,9 +353,9 @@
   }
 
   // Begin the entry animation for a card
-  function beginEntry(card: CardState, physicsState: Physics) {
-    const dx = card.x - blackhole.x;
-    const dy = card.y - blackhole.y;
+  function beginEntry(orbiter: OrbitVisualState, physicsState: Physics) {
+    const dx = orbiter.x - blackhole.x;
+    const dy = orbiter.y - blackhole.y;
 
     // Use the card's actual spawn distance as the starting radius.
     const spawnDist = Math.hypot(dx, dy);
@@ -328,24 +378,24 @@
   }
 
   //  Per-card update
-  function updateCard(card: CardState, physicsState: Physics) {
-    if (card.hidden) {
+  function updateOrbiter(orbiter: OrbitVisualState, physicsState: Physics) {
+    if (orbiter.hidden) {
       if (
         physicsState.respawnAt !== null &&
         Date.now() >= physicsState.respawnAt
       ) {
         // Reset visual state
-        card.hidden = false;
-        card.scale = 1;
-        card.opacity = 1;
+        orbiter.hidden = false;
+        orbiter.scale = orbiter.initialScale;
+        orbiter.opacity = 1;
 
         // Reset physics flags
         physicsState.falling = false;
         physicsState.vx = 0;
         physicsState.vy = 0;
 
-        spawnFromSide(card, physicsState);
-        beginEntry(card, physicsState);
+        spawnFromSide(orbiter);
+        beginEntry(orbiter, physicsState);
 
         physicsState.respawnAt = null;
       }
@@ -367,8 +417,8 @@
       const radius =
         physicsState.startOrbitRadius +
         (physicsState.orbitRadius - physicsState.startOrbitRadius) * eased;
-      card.x = blackhole.x + Math.cos(angle) * radius;
-      card.y =
+      orbiter.x = blackhole.x + Math.cos(angle) * radius;
+      orbiter.y =
         blackhole.y +
         Math.sin(angle) * radius +
         (1 - eased) * animationConfig.entry.verticalDropOffset;
@@ -379,17 +429,17 @@
     } else if (!physicsState.falling) {
       physicsState.orbitAngle +=
         physicsState.orbitSpeed * physicsState.orbitDirection;
-      card.x =
+      orbiter.x =
         blackhole.x +
         Math.cos(physicsState.orbitAngle) * physicsState.orbitRadius;
-      card.y =
+      orbiter.y =
         blackhole.y +
         Math.sin(physicsState.orbitAngle) * physicsState.orbitRadius;
     }
 
     if (physicsState.falling) {
-      const dx = blackhole.x - card.x,
-        dy = blackhole.y - card.y;
+      const dx = blackhole.x - orbiter.x,
+        dy = blackhole.y - orbiter.y;
       const dist = Math.hypot(dx, dy) || animationConfig.falling.minDistance;
       physicsState.vx =
         (physicsState.vx +
@@ -403,18 +453,18 @@
             blackhole.gravity *
             animationConfig.falling.accelerationFactor) *
         animationConfig.falling.velocityDamping;
-      card.x += physicsState.vx;
-      card.y += physicsState.vy;
-      card.scale = Math.max(
+      orbiter.x += physicsState.vx;
+      orbiter.y += physicsState.vy;
+      orbiter.scale = Math.max(
         animationConfig.falling.minScale,
-        card.scale * animationConfig.falling.scaleDecay,
+        orbiter.scale * animationConfig.falling.scaleDecay,
       );
-      card.opacity = Math.max(
+      orbiter.opacity = Math.max(
         0,
-        card.opacity * animationConfig.falling.opacityDecay,
+        orbiter.opacity * animationConfig.falling.opacityDecay,
       );
       if (dist < blackhole.absorbRadius) {
-        card.hidden = true;
+        orbiter.hidden = true;
         physicsState.respawnAt = Date.now() + animationConfig.respawn.delayMs;
       }
     }
@@ -425,6 +475,9 @@
   onMount(() => {
     const ctx = canvas.getContext("2d")!;
     let initialized = false;
+    let cancelled = false;
+    let resizeFn: (() => void) | null = null;
+    const rafId = { id: 0 };
 
     cards = cardConfigs.map((c) => ({
       ...c,
@@ -434,42 +487,80 @@
       opacity: 1,
       hidden: false,
       hovered: false,
+      initialScale: 1,
     }));
-    physics = cards.map(() => makePhysics());
+    cardPhysics = cards.map(() => makePhysics());
 
-    if (textElement) {
-      gsap.to(textElement, {
-        rotation: 360,
-        svgOrigin: "125 125",
-        duration: 10,
-        ease: "none",
-        repeat: -1,
-      });
-    }
+    // Load satellites async, but keep `onMount` itself synchronous
+    // so Svelte can reliably run the cleanup function.
+    (async () => {
+      const resolvedSatelliteConfigs =
+        satelliteConfigs === undefined
+          ? await loadSatelliteConfigs()
+          : satelliteConfigs;
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      blackhole.x = canvas.width / 2;
-      blackhole.y = canvas.height / 2;
-      layoutCards(!initialized);
-      initialized = true;
-    }
+      if (cancelled) return;
 
-    resize();
-    window.addEventListener("resize", resize);
+      satellites = resolvedSatelliteConfigs.map((s) => ({
+        ...s,
+        x: 0,
+        y: 0,
+        scale: s.scale ?? 0.7,
+        opacity: 1,
+        hidden: false,
+        initialScale: s.scale ?? 0.7,
+      }));
+      satellitePhysics = satellites.map(() => makePhysics());
 
-    const rafId = { id: 0 };
-    function tick() {
-      cards.forEach((card, i) => updateCard(card, physics[i]));
-      frame++;
-      drawScene(ctx);
+      if (textElement) {
+        gsap.to(textElement, {
+          rotation: 360,
+          svgOrigin: "125 125",
+          duration: 10,
+          ease: "none",
+          repeat: -1,
+        });
+      }
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        blackhole.x = canvas.width / 2;
+        blackhole.y = canvas.height / 2;
+
+        const slotTotal = cards.length + satellites.length;
+        layoutOrbit(!initialized, cards, cardPhysics, 0, slotTotal);
+        layoutOrbit(
+          !initialized,
+          satellites,
+          satellitePhysics,
+          cards.length,
+          slotTotal,
+        );
+        initialized = true;
+      }
+
+      resizeFn = resize;
+      resize();
+      window.addEventListener("resize", resizeFn);
+
+      function tick() {
+        cards.forEach((card, i) => {
+          updateOrbiter(card, cardPhysics[i]);
+        });
+        satellites.forEach((sat, i) => {
+          updateOrbiter(sat, satellitePhysics[i]);
+        });
+        frame++;
+        drawScene(ctx);
+        rafId.id = requestAnimationFrame(tick);
+      }
       rafId.id = requestAnimationFrame(tick);
-    }
-    rafId.id = requestAnimationFrame(tick);
+    })();
 
     return () => {
-      window.removeEventListener("resize", resize);
+      cancelled = true;
+      if (resizeFn) window.removeEventListener("resize", resizeFn);
       cancelAnimationFrame(rafId.id);
     };
   });
@@ -527,7 +618,7 @@
     </svg>
   {/if}
   <section class="card-layer" aria-label="Onderzoeksvragen">
-    {#each cards as card (card.title)}
+    {#each cards as card, i (card.id)}
       {#if !card.hidden}
         <a
           class="orbit-card"
@@ -542,19 +633,47 @@
           }}
           onmouseleave={() => {
             card.hovered = false;
-            physics[cards.indexOf(card)].falling = true;
+            cardPhysics[i].falling = true;
           }}
           onfocus={() => {
             card.hovered = true;
           }}
           onblur={() => {
             card.hovered = false;
-            physics[cards.indexOf(card)].falling = true;
+            cardPhysics[i].falling = true;
           }}
         >
           <h2>{card.title}</h2>
           <p>{card.subtitle}</p>
         </a>
+      {/if}
+    {/each}
+
+    {#each satellites as sat, i (sat.id)}
+      {#if !sat.hidden}
+        <div
+          class="orbit-satellite"
+          style:left="{sat.x}px"
+          style:top="{sat.y}px"
+          style:transform="translate(-50%, -50%) scale({sat.scale})"
+          style:opacity={sat.opacity}
+          style:user-select="none"
+          aria-hidden="true"
+          onmouseleave={() => {
+            satellitePhysics[i].falling = true;
+          }}
+        >
+          {#if sat.emoji}
+            <span class="orbit-satellite-emoji">{sat.emoji}</span>
+          {:else if sat.src}
+            <img
+              class="orbit-satellite-img"
+              src={sat.src}
+              alt={sat.alt ?? "Satellite"}
+              draggable="false"
+            />
+          {/if}
+        </div>
       {/if}
     {/each}
   </section>
@@ -624,5 +743,27 @@
 
   .orbit-card.hovered {
     transform: translate(-50%, -50%) scale(1.06) !important;
+  }
+
+  .orbit-satellite {
+    position: absolute;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 0.25s ease,
+      opacity 0.3s ease;
+    will-change: transform;
+    filter: drop-shadow(0 0 10px rgba(248, 132, 12, 0.25));
+    font-size: 28px;
+  }
+
+  .orbit-satellite-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+    user-select: none;
   }
 </style>
