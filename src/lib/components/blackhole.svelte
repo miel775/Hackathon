@@ -58,7 +58,6 @@
         display: block;
         overflow: visible;
         width: 256px;
-        box-shadow: 0 0 50px 30px var(--secondary-color);
         border-radius: 50%;
         view-transition-name: blackhole-morph;
     }
