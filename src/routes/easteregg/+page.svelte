@@ -1,11 +1,11 @@
 <script>
-    import Viewtransition from "$lib/components/viewtransition.svelte";
-    import Blackhole from "$lib/components/blackhole.svelte";
+  import Viewtransition from "$lib/components/viewtransition.svelte";
+  import Blackhole from "$lib/components/blackhole.svelte";
     import Alien from "$lib/components/aliencomponent.svelte";
-    import "$lib/style.css";
+  import "$lib/styles/style.css";
 </script>
-    <Viewtransition />
 
+<Viewtransition />
 
     <div id="easter-egg-content">
         <Alien />
@@ -15,9 +15,9 @@
         </div>
     </div>
 
-    <div id="giant-hole-wrapper">
-        <Blackhole expanded={true} />
-    </div>
+<div id="giant-hole-wrapper">
+  <Blackhole expanded={true} />
+</div>
 
 
 

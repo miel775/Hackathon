@@ -1,22 +1,67 @@
 [
   {
     "id": "A",
-    "title": "A",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "What does Nebula Xplorer stand for?",
+    "subtitle": "Click here to find out",
+    "content": "NEBULA – Xplorer stands for “Netherlands Educational Satellite for Exploration of Binary-Linked Astrophysics – X-ray Observer”.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/04/Nebula-Xplorer-InDevelopment-space-mission-SRON_Detail.png",
+    "imageAlt": "An illustration of the Nebula Xplorer"
   },
   {
     "id": "B",
-    "title": "B",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "For what purpose is Chandra designed?",
+    "subtitle": "Click here to find out.",
+    "content": "Chandra is designed as a general-purpose X-ray observatory that allows astronomers to look at hot gases in the universe. Those gases are found in the following objects:",
+    "listItems": [
+      "Stellar coronae: starbursts",
+      "White dwarf atmospheres",
+      "Binary systems: X-ray double stars",
+      "Cataclysmic variables: stars showing irregular outbursts or flares",
+      "Active galactic cores: actively slurping supermassive black holes at the centres of galaxies",
+      "Supernova remnants: gases left over when a star explodes",
+      "Clusters of Galaxies: hot gases suspended around large groups of galaxies far out in the universe."
+    ],
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/03/chandra_letg2.gif",
+    "imageAlt": "An illustration of the Chandra"
   },
   {
     "id": "C",
-    "title": "Data C",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "When did Euclid launch?",
+    "subtitle": "Click here to find out.",
+    "content": "Euclid was launched in 2023, orbiting around the Sun at the Lagrange point 2 (L2). With an unprecedented large field-of-view for a high-resolution telescope, Euclid is mapping billions of galaxies over the planned six-year mission. By looking at their spatial distribution and shape distortions in their images, astronomers hope to gain more insight into the nature of dark energy and dark matter. The enormous database also provides information about merging galaxies and possibly active supermassive black holes in their cores.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2026/01/Euclid_looking_into_the_Universe_SRON.jpg",
+    "imageAlt": "An illustration of the Euclid"
+  },
+  {
+    "id": "D",
+    "title": "How long was GUSTO's ballon flight?",
+    "subtitle": "Click here to find out",
+    "content": "The Galactic/Extragalactic ULDB Spectroscopic Terahertz Observatory (GUSTO) made a 57-day balloon flight around the South Pole in early 2024. From the stratosphere, it was the first to map much of the interstellar dust in the Milky Way at high spectral resolution. GUSTO distinguishes colours as sharp as one millionth of their wavelength. SRON co-supplied the far-infrared cameras.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/02/GUSTO_IMG_3340-1-rotated.jpg",
+    "imageAlt": "An illustration of GUSTO"
+  },
+  {
+    "id": "E",
+    "title": "What does PACE focus on?",
+    "subtitle": "Click here to find out",
+    "content": "The Plankton, Aerosol, Cloud, ocean Ecosystem (PACE) satellite was launched in polar orbit in 2024. PACE focuses on research into plankton in the oceans, and clouds and aerosols in the atmosphere. Aerosols are small particles in the atmosphere such as soot, ash or desert dust and are a major uncertain factor in climate science. SRON has developed the Dutch SPEXone aerosol instrument together with Airbus Netherlands.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/02/PACE_credit_NASA_GSFC.png",
+    "imageAlt": "An illustration of PACE"
   },
   {
     "id": "F",
-    "title": "F",
-    "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    "title": "What does the Nebula Xplorer investigate?",
+    "subtitle": "Click here to find out",
+    "content": "NEBULA-Xplorer will investigate how jets form and how X-ray binaries evolve. It will observe these objects for long periods of time to see how their emission varies on time scales from milliseconds to weeks. This long observation time makes it possible to combine X-ray activity with data from other wavelengths from other telescopes.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/04/Nebula-Xplorer-InDevelopment-space-mission-SRON_Detail.png",
+    "imageAlt": "An illustration of the Nebula Xplorer"
+  },
+  {
+    "id": "G",
+    "title": "How big is the Nebula Xplorer?",
+    "subtitle": "Click here to find out",
+    "content": "NEBULA – Xplorer will be a very compact X-ray space telescope, measuring only 110 x 85 x 50 centimetres. It can be made so small by using several cylindrical mirrors that reflect X-rays. The mission has one X-ray instrument on board that can measure how X-rays vary over a long period of time. The space telescope will use existing, commercial X-ray detectors. These will be cooled down to their optimum operating temperature of -35 degrees Celsius.",
+    "imageUrl": "https://www.sron.nl/wp-content/uploads/2025/04/Nebula-Xplorer-InDevelopment-space-mission-SRON_Detail.png",
+    "imageAlt": "An illustration of the Nebula Xplorer"
   }
 ]
