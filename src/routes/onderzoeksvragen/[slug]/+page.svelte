@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import "$lib/styles/detail.css";
+  import "$lib/styles/style.css"
 
   type DetailData = {
     title: string;

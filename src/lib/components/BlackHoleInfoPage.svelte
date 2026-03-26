@@ -526,12 +526,6 @@
 </main>
 
 <style>
-  .page {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
   .space {
     /* position: absolute; */
     inset: 0;
@@ -549,7 +543,10 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    overflow: visible;
     z-index: 1;
+    box-shadow: 0 0 50px 30px var(--secondary-color);
+    border-radius: 50%;
   }
 
   #blackhole {
@@ -558,12 +555,10 @@
     display: block;
     overflow: visible;
     width: 256px;
-    box-shadow: 0 0 50px 30px var(--secondary-color);
-    border-radius: 50%;
   }
 
   .orbit-text {
-    stroke: #fff;
+    stroke: var(--neutral-color-white);
     font-size: 32px;
   }
 

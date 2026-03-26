@@ -1,8 +1,8 @@
 <script lang="ts">
-  import BlackHole from "$lib/components/blackhole.svelte";
   import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
 
   import "$lib/styles/home.css";
+  import "$lib/styles/style.css"
 
   let { data } = $props();
 </script>
