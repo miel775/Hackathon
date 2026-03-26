@@ -1,7 +1,7 @@
 <script>
   import gsap from "gsap";
   import { onMount } from "svelte";
-  import MorphSVGPlugin from "gsap-trial/dist/MorphSVGPlugin";
+  import MorphSVGPlugin from "gsap/dist/MorphSVGPlugin";
 
   import step1Src from "$lib/assets/audio/step-1.mp3";
   import step2Src from "$lib/assets/audio/step-2.mp3";
