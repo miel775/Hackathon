@@ -1,9 +1,14 @@
 [
-  { "id": "sat-1", "emoji": "🛰️", "scale": 0.7 },
+  { "id": "sat-1", "emoji": "🛰️", "scale": 0.3 },
   { "id": "sat-2", "emoji": "🌑", "scale": 0.6 },
   { "id": "sat-3", "emoji": "🌑", "scale": 0.8 },
   { "id": "sat-4", "emoji": "🌑", "scale": 0.2 },
   { "id": "sat-5", "emoji": "🌑", "scale": 0.5 },
-  { "id": "sat-6", "emoji": "🌑", "scale": 0.4 }
-  
+  { "id": "sat-6", "emoji": "🌑", "scale": 0.4 },
+  { "id": "sat-7", "emoji": "🌑", "scale": 0.4 },
+  { "id": "sat-8", "emoji": "🌑", "scale": 0.8 },
+  { "id": "sat-9", "emoji": "🌑", "scale": 0.2 },
+  { "id": "sat-10", "emoji": "🌑", "scale": 0.5 },
+  { "id": "sat-11", "emoji": "🌑", "scale": 0.4 },
+  { "id": "sat-12", "emoji": "🛸", "scale": 0.4 }
 ]
