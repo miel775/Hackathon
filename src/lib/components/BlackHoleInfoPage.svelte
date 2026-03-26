@@ -24,7 +24,7 @@
 
   const animationConfig = {
     blackHole: {
-      radius: 18, // Base black hole size (also drives glow and ring placement).
+      radius: 1, // Base black hole size (also drives glow and ring placement).
       absorbRadius: 30, // Distance where orbiting cards are considered “absorbed”.
       gravity: 0.12, // Pull strength toward the center (affects entry/fall feel).
     },
