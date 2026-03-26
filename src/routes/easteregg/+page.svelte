@@ -9,8 +9,7 @@
     <title>Surprise an alien</title>
   </svelte:head>
     <Viewtransition />
-
-
+<main>
     <div id="easter-egg-content">
         <Alien />
         <div id="easter-egg-text">
@@ -22,8 +21,7 @@
     <div id="giant-hole-wrapper">
         <Blackhole expanded={true} />
     </div>
-
-
+  </main>
 
 
 <style>

@@ -248,12 +248,13 @@ masterTl
 
 @media (max-width: 720px) {
 
-    #alien {
+#alien {
   height: 400px;
   position: absolute;
   left: 35%;
   top: 10%;
   animation: totheright 3s linear;
+  
 }
     @keyframes totheright {
         from {
@@ -266,13 +267,14 @@ masterTl
     }
 }
 
-@media (min-width: 1080px) {
+@media (max-width: 2100px) {
 
-        #alien {
+#alien {
   height: 400px;
   position: absolute;
   left: 45%;
   top: 10%;
+  overflow: visible;
   animation: totheright 3s linear;
 }
     @keyframes totheright {
@@ -284,6 +286,24 @@ masterTl
         }
     }
 }
+
+@media (prefers-reduced-motion: reduce) {
+
+  #alien {
+    animation: dissolve 4s linear infinite both;
+  }
+
+@keyframes dissolve {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 100%;
+        }
+
+    }
+}
+
 
 
 </style>
