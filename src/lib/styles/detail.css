@@ -1,3 +1,7 @@
+body {
+  overflow: unset !important;
+}
+
 .detail-page {
   min-height: 100dvh;
   display: grid;
@@ -13,6 +17,15 @@
   justify-self: center;
   color: #b7c3ff;
   text-decoration: none;
+  border: 2px solid rgb(255 255 255 / 18%);
+  border-radius: 10%;
+  padding: 0.3rem;
+  transition: 1s;
+}
+
+.back-link:hover {
+  transition: 1.3s;
+  font-size: 1.3rem;
 }
 
 .card {
@@ -38,4 +51,11 @@ p {
   color: #cfd7ff;
   font-size: 0.9rem;
   opacity: 0.85;
+}
+
+.detail-page-img {
+  display: block;
+  width: 50%;
+  padding-top: 1rem;
+  margin: 0 auto;
 }

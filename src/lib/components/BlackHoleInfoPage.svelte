@@ -12,6 +12,16 @@
     hovered: boolean;
   };
 
+  function createSlug(text: string) {
+    if (!text) return "";
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
   const animationConfig = {
     blackHole: {
       radius: 18, // Base black hole size (also drives glow and ring placement).
@@ -517,12 +527,12 @@
     </svg>
   {/if}
   <section class="card-layer" aria-label="Onderzoeksvragen">
-    {#each cards as card (card.id)}
+    {#each cards as card (card.title)}
       {#if !card.hidden}
         <a
           class="orbit-card"
           class:hovered={card.hovered}
-          href={`/onderzoeksvragen/${card.id}`}
+          href={`/onderzoeksvragen/${createSlug(card.title)}`}
           style:left="{card.x}px"
           style:top="{card.y}px"
           style:transform="translate(-50%, -50%) scale({card.scale})"
@@ -551,14 +561,8 @@
 </main>
 
 <style>
-  .page {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
   .space {
-    position: absolute;
+    /* position: absolute; */
     inset: 0;
     z-index: 0;
   }
@@ -574,7 +578,10 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    overflow: visible;
     z-index: 1;
+    box-shadow: 0 0 50px 30px var(--secondary-color);
+    border-radius: 50%;
   }
 
   #blackhole {
@@ -603,7 +610,7 @@
   }
 
   .orbit-text {
-    stroke: #fff;
+    stroke: var(--neutral-color-white);
     font-size: 32px;
   }
 

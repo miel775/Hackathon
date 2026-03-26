@@ -1,9 +1,8 @@
 <script lang="ts">
-  import Blackhole from "$lib/components/blackhole.svelte";
   import BlackHoleInfoPage from "$lib/components/BlackHoleInfoPage.svelte";
   import Viewtransition from "$lib/components/viewtransition.svelte";
   import "$lib/styles/home.css";
-  import "$lib/style.css";
+  import "$lib/styles/style.css"
 
   let { data } = $props();
 </script>
@@ -29,7 +28,6 @@
       position: fixed; 
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
       justify-content: center;
