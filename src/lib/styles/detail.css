@@ -1,3 +1,7 @@
+body {
+  overflow: unset !important;
+}
+
 .detail-page {
   min-height: 100dvh;
   display: grid;
